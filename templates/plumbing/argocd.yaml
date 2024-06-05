@@ -16,27 +16,10 @@ metadata:
 spec:
 # Adding health checks to argocd to prevent pvc resources
 # that aren't bound state from blocking deployments
+{{- if len $.Values.clusterGroup.argoCD.resourceHealthChecks }}
   resourceHealthChecks:
-  - kind: PersistentVolumeClaim
-    check: |
-      hs = {}
-      if obj.status ~= nil then
-        if obj.status.phase ~= nil then
-          if obj.status.phase == "Pending" then
-            hs.status = "Healthy"
-            hs.message = obj.status.phase
-            return hs
-          elseif obj.status.phase == "Bound" then
-            hs.status = "Healthy"
-            hs.message = obj.status.phase
-            return hs
-          end
-        end
-      end
-      hs.status = "Progressing"
-      hs.message = "Waiting for PVC"
-      return hs
-
+{{- toYaml $.Values.clusterGroup.argoCD.resourceHealthChecks | nindent 4 }}
+{{- end }}
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   applicationSet:
     resources:

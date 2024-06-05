@@ -548,6 +548,13 @@
         "initContainers": {
           "type": "array",
           "description": "A list of initContainers to add to the repo-server if needed"
+        },
+        "resourceHealthChecks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArgoCDResourceHealthChecks"
+          },
+          "description": "ResourceHealthChecks customizes resource health check behavior."
         }
       }
     },
@@ -580,6 +587,21 @@
         "name",
         "image"
       ]
+    },
+    "ArgoCDResourceHealthChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "check": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        }
+      }
     },
     "IndexImages": {
       "type": "object",
