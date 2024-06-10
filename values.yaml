@@ -48,6 +48,12 @@ clusterGroup:
           hs.status = "Progressing"
           hs.message = "Waiting for PVC"
           return hs
+    resourceExclusions: |
+      - apiGroups:
+        - tekton.dev
+        kinds:
+        - TaskRun
+        - PipelineRun
 
   imperative:
     jobs: []
