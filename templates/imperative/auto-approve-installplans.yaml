@@ -38,7 +38,7 @@ spec:
               {{- end }}
               - -e
               - "@/values/values.yaml"
-              - common/ansible/playbooks/auto-approve-installplans/auto-approve-installplans.yaml
+              - rhvp.cluster_utils.auto-approve-installplans
               volumeMounts:
                 {{- include "imperative.volumemounts_ca" . | indent 16 }}
           containers:
