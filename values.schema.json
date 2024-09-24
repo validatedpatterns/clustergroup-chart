@@ -55,7 +55,7 @@
     },
     "Main": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": [
         "clusterGroupName"
       ],
@@ -64,6 +64,10 @@
       "properties": {
         "clusterGroupName": {
           "type": "string"
+        },
+        "multiSourceRepoUrl": {
+          "type": "string",
+          "description": "The URL repo for to be used by default when no repoURL is specified in a multisource application. Defaults to https://charts.validatedpatterns.io/"
         },
         "extraParameters": {
           "type": "array",
