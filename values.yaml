@@ -58,7 +58,7 @@ clusterGroup:
 
   imperative:
     jobs: []
-    image: quay.io/hybridcloudpatterns/imperative-container:latest
+    image: quay.io/hybridcloudpatterns/imperative-container:v1
     namespace: "imperative"
     # configmap name in the namespace that will contain all helm values
     valuesConfigMap: "helm-values-configmap"
