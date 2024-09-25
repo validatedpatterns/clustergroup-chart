@@ -4,3 +4,8 @@ keywords:
 - pattern
 name: clustergroup
 version: 0.9.3
+home: https://github.com/validatedpatterns/clustergroup-chart
+maintainers:
+  - name: Validated Patterns Team
+    email: validatedpatterns@googlegroups.com
+icon: https://validatedpatterns.io/images/validated-patterns.png

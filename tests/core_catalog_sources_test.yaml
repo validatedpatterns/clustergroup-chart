@@ -1,0 +1,49 @@
+suite: Test catalog-sources with default values
+templates:
+  - templates/core/catalog-sources.yaml
+release:
+  name: release-test
+tests:
+  - it: should output default values
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should output catalogsources when indeximages are set
+    set:
+      clusterGroup:
+        indexImages:
+          - name: foo
+            image: foo-image
+          - name: bar
+            image: bar-image
+          - image: baz-image
+    asserts:
+      - isKind:
+          of: CatalogSource
+      - hasDocuments:
+          count: 3
+      - equal:
+          path: metadata.namespace
+          value: openshift-marketplace
+      - equal:
+          path: spec.sourceType
+          value: grpc
+      - equal:
+          path: metadata.name
+          value: foo
+        documentSelector:
+          path: metadata.name
+          value: foo
+      - equal:
+          path: spec.image
+          value: foo-image
+        documentSelector:
+          path: metadata.name
+          value: foo
+      - equal:
+          path: spec.image
+          value: baz-image
+        documentSelector:
+          path: metadata.name
+          value: baz-image
