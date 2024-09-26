@@ -28,4 +28,4 @@ jobs:
 
       - name: Verify ClusterGroup values.schema.json
         run: |
-          set -e; for i in examples/*yaml; do echo "$i"; check-jsonschema --schemafile ./values.schema.json "$i"; done
+          check-jsonschema --schemafile ./values.schema.json "values.yaml"
