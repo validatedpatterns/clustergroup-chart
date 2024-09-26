@@ -134,15 +134,19 @@ spec:
     name: {{ $.Values.clusterGroup.targetCluster }}
     namespace: {{ default $namespace .namespace }}
   project: {{ .project }}
-  {{- if and .chart .chartVersion }} {{- /* if .chartVersion is set *and* .repoURL is undefined we assume this is a multisource app */}}
+  {{- if .chartVersion }} {{- /* if .chartVersion is set we assume this is a multisource app */}}
   sources:
-    - repoURL: {{ coalesce .repoURL $.Values.global.repoURL }}
+    - repoURL: {{ $.Values.global.repoURL }}
       {{- /* We do not allow overriding the values with .targetRevision because when we use .targetRevision in a chart to specify the helm
              chart, that revision (e.g. 0.0.1) won't exist in the git tree. So here we simply always take the pattern's git branch/commit */}}
       targetRevision: {{ $.Values.global.targetRevision }}
       ref: patternref
     - repoURL: {{ coalesce .repoURL $.Values.global.multiSourceRepoUrl }}
+      {{- if .chart }}
       chart: {{ .chart }}
+      {{- else }}
+      path: {{ .path }}
+      {{- end }}{{- /* if .chart */}}
       targetRevision: {{ .chartVersion }}
       {{- if .plugin }}
       plugin: {{ .plugin | toPrettyJson }}
