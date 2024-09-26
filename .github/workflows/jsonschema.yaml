@@ -2,6 +2,8 @@
 name: Verify json schema
 on: [push, pull_request]
 
+permissions: read-all
+
 jobs:
   jsonschema_tests:
     name: Json Schema tests
@@ -10,13 +12,7 @@ jobs:
         python-version: [3.11.3]
     runs-on: ubuntu-latest
 
-    ##################
-    # Load all steps #
-    ##################
     steps:
-      ##########################
-      # Checkout the code base #
-      ##########################
       - name: Checkout Code
         uses: actions/checkout@v4
 
