@@ -1,4 +1,3 @@
-{{- if not (eq .Values.enabled "plumbing") }}
 {{/* This is always defined as we always unseal the cluster with an imperative job */}}
 {{- $valuesyaml := toYaml $.Values -}}
 apiVersion: v1
@@ -18,4 +17,3 @@ metadata:
   annotations:
   labels:
     config.openshift.io/inject-trusted-cabundle: 'true'
-{{- end }}

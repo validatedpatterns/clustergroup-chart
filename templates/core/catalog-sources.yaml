@@ -1,4 +1,3 @@
-{{- if not (eq .Values.enabled "plumbing") }}
 {{- range .Values.clusterGroup.indexImages }}
 {{- $name := mustRegexReplaceAll "[^/]*/(.*):.*" .image "${1}" | replace "/" "-" }}
 apiVersion: operators.coreos.com/v1alpha1
@@ -10,5 +9,4 @@ spec:
   sourceType: grpc
   image: {{ .image }}
 ---
-{{- end -}}
 {{- end -}}

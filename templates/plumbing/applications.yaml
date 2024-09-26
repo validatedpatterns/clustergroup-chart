@@ -1,8 +1,4 @@
-{{- if not (eq .Values.enabled "core") }}
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
-{{- if (eq .Values.enabled "plumbing") }}
-{{- $namespace = "openshift-gitops" }}
-{{- end }}
 {{- range .Values.clusterGroup.applications }}
 {{- if .disabled }} {{- /* This allows us to null out an Application entry by specifying disabled: true in an override file */}}
 {{- else if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) }}
@@ -297,4 +293,3 @@ spec:
   {{- end }}{{- /* .syncPolicy */}}
 {{- end }}{{- /* if or (.generators) (.generatorFile) (.useGeneratorValues) (.destinationServer) (.destinationNamespace) */}}
 {{- end }}{{- /* range .Values.clusterGroup.applications */}}
-{{- end }}{{- /* if not (eq .Values.enabled "core") */}}
