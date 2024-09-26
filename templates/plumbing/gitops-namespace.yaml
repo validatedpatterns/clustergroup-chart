@@ -1,4 +1,3 @@
-{{- if not (eq .Values.enabled "plumbing") }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -10,4 +9,3 @@ metadata:
   # - any references to secrets and route URLs in documentation
   name: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
 spec: {}
-{{- end }}

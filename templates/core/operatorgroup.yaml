@@ -1,4 +1,3 @@
-{{- if not (eq .Values.enabled "plumbing") }}
 {{- /*
   We first check if namespaces are defined as a map.  If it is we call
   our helper function in _helpers.tpl to process the projects
@@ -51,4 +50,3 @@ spec:
 {{- end }} {{- /* if or (empty $.Values.clusterGroup.operatorgroupExcludes) (not (has . $.Values.clusterGroup.operatorgroupExcludes)) */}}
 {{- end }} {{- /* range $ns := .Values.clusterGroup.namespaces */}}
 {{- end }} {{- /* if kindIs "map" $ns */}}
-{{- end }} {{- /* if not (eq .Values.enabled "plumbing") */}}
