@@ -1,6 +1,5 @@
 {
     "ignore": [
-        "templates/plumbing/hosted-sites.yaml",
         "templates/plumbing/applications.yaml",
         "templates/imperative/_helpers.tpl",
         "templates/core/subscriptions.yaml",

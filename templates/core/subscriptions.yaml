@@ -1,4 +1,3 @@
-{{- if not (eq .Values.enabled "plumbing") }}
 {{- range .Values.clusterGroup.subscriptions }}
 {{- $subs := . }}
 {{- $installPlanValue := .installPlanApproval }}
@@ -68,6 +67,4 @@ spec:
   {{- end }}
 ---
 {{- end }}
-{{- end }}
----
 {{- end }}
