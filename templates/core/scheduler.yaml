@@ -4,6 +4,8 @@ apiVersion: config.openshift.io/v1
 kind: Scheduler
 metadata:
   name: cluster
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
 {{- toYaml .Values.clusterGroup.scheduler | nindent 2 }}
 {{- end -}}
