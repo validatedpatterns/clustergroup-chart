@@ -66,7 +66,12 @@ spec:
           memory: 128Mi
   initialSSHKnownHosts: {}
   rbac:
-    defaultPolicy: role:admin
+    defaultPolicy: role:readonly
+    policy: |-
+      g, system:cluster-admins, role:admin
+      g, cluster-admins, role:admin
+      g, admin, role:admin
+    scopes: '[groups, email]'
   repo:
     initContainers:
     - command:
