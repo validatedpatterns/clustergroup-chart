@@ -441,7 +441,7 @@
 	  }
 	},
 	"annotations": {
-          "type": "array",
+      "type": "array",
 	  "items": {
 	    "$ref": "#/definitions/NameValue"
 	  }
@@ -997,6 +997,9 @@
             "Manual",
             "Automatic"
           ]
+        },
+        "annotations": {
+          "type": "object"
         },
         "config": {
           "type": "object",
