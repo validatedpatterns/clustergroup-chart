@@ -1,0 +1,160 @@
+suite: Test subscriptions with default values
+templates:
+  - templates/core/subscriptions.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should output two subscriptions
+    set:
+      clusterGroup:
+        subscriptions:
+          acm:
+            name: advanced-cluster-management
+            namespace: open-cluster-management
+            channel: release-2.11
+            csv: advanced-cluster-management.v2.6.1
+            annotations:
+              foo: bar
+              argocd.argoproj.io/sync-wave: "5"
+          odf-operator:
+            name: odf-operator
+            namespace: openshift-storage
+            sourceNamespace: foo
+            source: redhat-operators
+            config:
+              env:
+                - name: foo
+                  value: bar
+    asserts:
+      - isKind:
+          of: Subscription
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        equal:
+          path: spec.name
+          value: advanced-cluster-management
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        equal:
+          path: metadata.namespace 
+          value: open-cluster-management
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        equal:
+          path: spec.sourceNamespace
+          value: openshift-marketplace
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        equal:
+          path: spec.channel
+          value: release-2.11
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        equal:
+          path: spec.sourceNamespace
+          value: openshift-marketplace
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "5"
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        equal:
+          path: metadata.annotations["foo"]
+          value: bar
+      - documentSelector:
+          path: metadata.name
+          value: advanced-cluster-management
+        notExists:
+          path: spec.config.env
+
+      - documentSelector:
+          path: metadata.name
+          value: odf-operator
+        equal:
+          path: spec.sourceNamespace
+          value: foo
+      - documentSelector:
+          path: metadata.name
+          value: odf-operator
+        equal:
+          path: spec.config.env[0].name
+          value: foo
+      - documentSelector:
+          path: metadata.name
+          value: odf-operator
+        equal:
+          path: spec.config.env[0].value
+          value: bar
+        
+  - it: should output one subscription per namespace
+    set:
+      clusterGroup:
+        subscriptions:
+          acm:
+            name: advanced-cluster-management
+            namespaces:
+            - acmfoo
+            - acmbar
+            annotations:
+              argocd.argoproj.io/sync-wave: "5"
+          camel-k:
+            name: camel-k
+            namespaces:
+            - manuela-data-lake
+            - manuela-tst-all
+            - foo
+            channel: stable-v2
+            source: community-operators
+            sourceNamespace: openshift-marketplace
+    asserts:
+      - isKind:
+          of: Subscription
+      - hasDocuments:
+          count: 5
+      - documentSelector:
+          path: metadata.namespace
+          value: acmfoo
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "5"
+      - documentSelector:
+          path: metadata.namespace
+          value: acmbar
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "5"
+      - documentSelector:
+          path: metadata.namespace
+          value: manuela-data-lake
+        equal:
+          path: spec.name
+          value: camel-k
+      - documentSelector:
+          path: metadata.namespace
+          value: manuela-tst-all
+        equal:
+          path: spec.name
+          value: camel-k
+      - documentSelector:
+          path: metadata.namespace
+          value: foo
+        equal:
+          path: spec.name
+          value: camel-k
+

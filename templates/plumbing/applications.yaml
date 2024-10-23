@@ -50,7 +50,7 @@ spec:
         - {{ tpl $valueFile $ | quote }}
         {{- end }}
         parameters:
-          {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
+          {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 10 }}
           {{- range .extraHubClusterDomainFields }}
           - name: {{ . }}
             value: {{ $.Values.global.hubClusterDomain }}
