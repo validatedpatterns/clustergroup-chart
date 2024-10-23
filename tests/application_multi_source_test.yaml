@@ -1,0 +1,99 @@
+suite: Test multi source argo application
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+
+  - it: should render two multisource applications
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            ignoreDifferences:
+              - group: internal.open-cluster-management.io
+                kind: ManagedClusterInfo
+                jsonPointers:
+                  - /spec/loggingCA
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        equal:
+          path: spec.sources[0].repoURL
+          value: https://github.com/validatedpatterns/multicloud-gitops
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        equal:
+          path: spec.sources[1].repoURL
+          value: https://charts.validatedpatterns.io
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        equal:
+          path: spec.sources[0].repoURL
+          value: https://github.com/validatedpatterns/multicloud-gitops
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        lengthEqual:
+          path: spec.sources[1].helm.parameters
+          count: 15
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        equal:
+          path: spec.sources[1].repoURL
+          value: https://charts.validatedpatterns.io
+
+  - it: should render a multisource applications and its extraparameters
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      extraParametersNested:
+        foo: bar
+        baz: bla
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        lengthEqual:
+          path: spec.sources[1].helm.parameters
+          count: 17
