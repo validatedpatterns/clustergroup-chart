@@ -102,3 +102,59 @@ tests:
           path: spec.config.env[0].value
           value: bar
         
+  - it: should output one subscription per namespace
+    set:
+      clusterGroup:
+        subscriptions:
+          acm:
+            name: advanced-cluster-management
+            namespaces:
+            - acmfoo
+            - acmbar
+            annotations:
+              argocd.argoproj.io/sync-wave: "5"
+          camel-k:
+            name: camel-k
+            namespaces:
+            - manuela-data-lake
+            - manuela-tst-all
+            - foo
+            channel: stable-v2
+            source: community-operators
+            sourceNamespace: openshift-marketplace
+    asserts:
+      - isKind:
+          of: Subscription
+      - hasDocuments:
+          count: 5
+      - documentSelector:
+          path: metadata.namespace
+          value: acmfoo
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "5"
+      - documentSelector:
+          path: metadata.namespace
+          value: acmbar
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "5"
+      - documentSelector:
+          path: metadata.namespace
+          value: manuela-data-lake
+        equal:
+          path: spec.name
+          value: camel-k
+      - documentSelector:
+          path: metadata.namespace
+          value: manuela-tst-all
+        equal:
+          path: spec.name
+          value: camel-k
+      - documentSelector:
+          path: metadata.namespace
+          value: foo
+        equal:
+          path: spec.name
+          value: camel-k
+
