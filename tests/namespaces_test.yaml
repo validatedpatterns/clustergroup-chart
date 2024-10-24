@@ -1,0 +1,59 @@
+suite: Test namespace with default values
+templates:
+  - templates/core/namespaces.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should output namespaces when defined as list
+    set:
+      global:
+        pattern: test
+      clusterGroup:
+        name: hub
+        namespaces:
+          - foo
+          - bar
+          - baz
+    asserts:
+      - isKind:
+          of: Namespace
+      - hasDocuments:
+          count: 3
+      - documentSelector:
+          path: metadata.name
+          value: bar
+        equal:
+          path: metadata.labels["argocd.argoproj.io/managed-by"]
+          value: test-hub
+
+  - it: should output namespaces when defined as map
+    set:
+      global:
+        pattern: test
+      clusterGroup:
+        name: hub
+        namespaces:
+          namespace1:
+          open-cluster-management:
+            labels:
+              openshift.io/node-selector: ""
+              kubernetes.io/os: linux
+            annotations:
+              openshift.io/cluster-monitoring: "true"
+              owner: "namespace owner"
+    asserts:
+      - isKind:
+          of: Namespace
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: open-cluster-management
+        equal:
+          path: metadata.annotations["openshift.io/cluster-monitoring"]
+          value: "true"
