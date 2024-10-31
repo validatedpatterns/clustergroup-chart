@@ -178,5 +178,9 @@ spec:
     retry:
       limit: {{ default 20 $.Values.global.applicationRetryLimit }}
   {{- end }}{{- /* .syncPolicy */}}
+{{- range $obj := .extraObjects }}
+---
+{{ $obj | toYaml }}
+{{- end }}{{- /* range .extraObjects */}}
 {{- end }}{{- /* if .disabled */}}
 {{- end }}{{- /* range .Values.clusterGroup.applications */}}

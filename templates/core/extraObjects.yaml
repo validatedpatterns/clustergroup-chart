@@ -1,0 +1,4 @@
+{{- range $obj := .Values.clusterGroup.extraObjects }}
+---
+{{ $obj | toYaml }}
+{{- end }}{{- /* range $obj */ }}

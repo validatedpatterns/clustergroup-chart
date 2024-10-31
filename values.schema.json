@@ -394,6 +394,10 @@
         "imperative": {
           "$ref": "#/definitions/Imperative"
         },
+        "extraObjects": {
+          "type": "array",
+          "description": "Extra manifests used within the main clustergroup application, primarily ArgoCD Resource Hooks to sequence subscription installs"
+        },
         "managedClusterGroups": {
           "anyOf": [
             {
@@ -546,6 +550,10 @@
         "extraPatternNameFields": {
           "type": "array",
           "description": "List of extra fields that will be passed to ArgoCD."
+        },
+        "extraObjects": {
+          "type": "array",
+          "description": "A list of manifests (initially ArcoCD Resource Hooks) to add to the Application object."
         },
         "overrides": {
           "type": "object"
