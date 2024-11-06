@@ -1,0 +1,11 @@
+suite: Test argocd with default values
+templates:
+  - templates/plumbing/argocd.yaml
+release:
+  name: release-test
+tests:
+  - it: should contain argocd by default
+    documentIndex: 0
+    asserts:
+      - isKind:
+          of: ArgoCD
