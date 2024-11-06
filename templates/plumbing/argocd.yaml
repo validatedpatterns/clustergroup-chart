@@ -153,13 +153,6 @@ spec:
         name: {{ $cmp.name }}
 {{- end }}
 {{- end }}
-    resources:
-      limits:
-        cpu: "1"
-        memory: 512Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
 {{- if $.Values.clusterGroup.argoCD.resourceExclusions }}
   resourceExclusions: {{- $.Values.clusterGroup.argoCD.resourceExclusions | toYaml | indent 2 }}
 {{- end }}
