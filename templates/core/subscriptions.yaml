@@ -79,4 +79,40 @@ spec:
   {{- end }}{{/* if $.Values.global.options.useCSV */}}
 ---
 {{- end }}{{/* if $subs.namespaces */}}
+{{- if and $subs.sequenceJob (not $subs.sequenceJob.disabled) }}{{/* if $subs.sequenceJob */}}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $subs.name }}-sequencejob
+  annotations:
+    argocd.argoproj.io/hook: {{ coalesce $subs.sequenceJob.hookType "Sync" }}
+    argocd.argoproj.io/sync-wave: {{ coalesce $subs.sequenceJob.syncWave (get $subs.annotations "argocd.argoproj.io/sync-wave") | quote }}
+spec:
+  parallelism: 1
+  completions: 1
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ $subs.name }}-sequencejob
+          image: {{ coalesce $subs.sequenceJob.image "quay.io/hybridcloudpatterns/imperative-container:v1" }}
+          {{- if $subs.sequenceJob.command }}
+          command: {{ $subs.sequenceJob.command | toJson }}
+          {{- else }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              while [ 1 ];
+              do
+                oc get {{ $subs.sequenceJob.resourceType }} {{ $subs.sequenceJob.resourceName }}  {{- if $subs.sequenceJob.resourceNamespace }} -n {{ $subs.sequenceJob.resourceNamespace }}{{- end }} && break
+                echo "{{ $subs.sequenceJob.resourceType }} {{ $subs.sequenceJob.resourceName }} {{- if $subs.sequenceJob.resourceNamespace }} in {{ $subs.sequenceJob.resourceNamespace}} {{- end }} not found, waiting..."
+                sleep 5
+              done
+              echo "{{ $subs.sequenceJob.resourceType }} {{ $subs.sequenceJob.resourceName }} {{- if $subs.sequenceJob.resourceNamespace }} in {{ $subs.sequenceJob.resourceNamespace}} {{- end }} found, exiting..."
+              exit 0
+          {{- end }}
+---
+{{- end }}{{/* if $subs.sequenceJob */}}
 {{- end }}{{/* range .Values.clusterGroup.subscriptions */}}

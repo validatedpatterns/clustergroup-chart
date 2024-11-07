@@ -1,0 +1,7 @@
+{{- range $objname, $obj := .Values.clusterGroup.extraObjects }}
+{{- if not $obj.disabled }}
+---
+{{- $obj := unset $obj "disabled" }}
+{{ $obj | toYaml }}
+{{- end }}{{- /* if not $obj.disabled */}}
+{{- end }}{{- /* range $obj */}}
