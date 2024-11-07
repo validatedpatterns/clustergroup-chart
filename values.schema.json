@@ -394,6 +394,10 @@
         "imperative": {
           "$ref": "#/definitions/Imperative"
         },
+        "extraObjects": {
+          "type": "object",
+          "description": "Extra objects to add at the clustergroup level. Expected to be ArgoCD Resource Hooks." 
+        },
         "managedClusterGroups": {
           "anyOf": [
             {
@@ -1007,6 +1011,11 @@
         },
         "disabled": {
           "type": "boolean"
+        },
+        "sequenceJob": {
+          "type": "object",
+          "description": "Will create an ArgoCD Resource Hook to help sequence subscription installs if needed",
+          "$ref": "#/definitions/SequenceJob"
         }
       },
       "required": [
@@ -1030,6 +1039,38 @@
         "value"
       ],
       "title": "SubscriptionsConfigEnv"
+    },
+    "SequenceJob": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "syncWave": {
+          "type": "string"
+        },
+        "resourceType": {
+          "type": "string"
+        },
+        "resourceName": {
+          "type": "string"
+        },
+        "resourceNamespace": {
+          "type": "string"
+        },
+        "hookType": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "command": {
+          "type": "array"
+        },
+        "disabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "title": "SequenceJob"
     }
   }
 }

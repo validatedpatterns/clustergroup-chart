@@ -20,7 +20,7 @@ clusterGroup:
 #  scheduler:
 #    mastersSchedulable: true
 #    defaultNodeSelector: type=user-node,region=east
-#    profile: HighNodeUtilization 
+#    profile: HighNodeUtilization
 
   argoCD:
     initContainers: []
@@ -125,11 +125,42 @@ clusterGroup:
 #    project: datacenter
 #    path: applications/acm
 
+  extraObjects: {}
+#    wait-for-virt-storageclass:
+#      apiVersion: batch/v1
+#      kind: Job
+#      metadata:
+#        name: wait-for-virt-storageclass
+#        annotations:
+#          argocd.argoproj.io/hook: Sync
+#          argocd.argoproj.io/sync-wave: "5"
+#      spec:
+#        parallelism: 1
+#        completions: 1
+#        template:
+#          spec:
+#            restartPolicy: OnFailure
+#            containers:
+#              - name: wait-for-storage-class
+#                image: quay.io/hybridcloudpatterns/imperative-container:v1
+#                command:
+#                  - /bin/bash
+#                  - -c
+#                  - |
+#                    while [ 1 ];
+#                    do
+#                      oc get sc ocs-storagecluster-ceph-rbd && break
+#                      echo "Storage class ocs-storagecluster-ceph-rbd not found, waiting..."
+#                      sleep 5
+#                    done
+#                    echo "Storage class ocs-storagecluster-ceph-rbd found, exiting"
+#                    exit 0
+
 secretStore:
   name: vault-backend
   kind: ClusterSecretStore
 
-# Depends on the value of 'vault_hub' ansible variable used 
+# Depends on the value of 'vault_hub' ansible variable used
 # during the installation
 #secretsBase:
 #  key: secret/data/hub
