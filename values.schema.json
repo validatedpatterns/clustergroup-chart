@@ -435,21 +435,15 @@
       "additionalProperties": true,
       "properties": {
         "name": {
-	  "type": "string",
-	  "description": "Name of the namespace."
+	        "type": "string",
+	        "description": "Name of the namespace."
         },
-	"labels": {
-	  "type": "array",
-	  "items": {
-            "$ref": "#/definitions/NameValue"
-	  }
-	},
-	"annotations": {
-      "type": "array",
-	  "items": {
-	    "$ref": "#/definitions/NameValue"
-	  }
-	}
+	      "labels": {
+	        "type": "object"
+	      },
+	      "annotations": {
+          "type": "object"
+	      }
       }
     },
     "Nodes": {
@@ -462,17 +456,11 @@
           "description": "Name of the node."
         },
         "labels": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/NameValue"
-          }
+          "type": "object"
         },
-	"annotations": {
-          "type": "array",
-	  "items": {
-	    "$ref": "#/definitions/NameValue"
-	  }
-	}
+	      "annotations": {
+          "type": "object"
+	      }
       }
     },
     "NameValue": {
@@ -577,6 +565,10 @@
         "path": {
           "type": "string",
           "description": "Path is a directory path within the Git repository, and is only valid for applications sourced from Git."
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to add to the created Application object"
         }
       },
       "required": [

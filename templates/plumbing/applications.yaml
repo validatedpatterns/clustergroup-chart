@@ -10,6 +10,12 @@ metadata:
   namespace: {{ $namespace }}
   labels:
     validatedpatterns.io/pattern: {{ $.Values.global.pattern }}
+    {{- if .annotations }}
+  annotations:
+    {{- range $key, $value := .annotations }}
+    {{ $key }}: {{ $value | default "" | quote }}
+    {{- end }}
+    {{- end }}{{- /* if .annotations */}}
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:
