@@ -224,11 +224,6 @@
           "description": "This is used by the pipelines as the branch for the development repository. e.g. v2.0. This is marked as deprecated"
         }
       },
-      "required": [
-        "hostname",
-        "account",
-        "email"
-      ],
       "title": "GlobalGit"
     },
     "Options": {
