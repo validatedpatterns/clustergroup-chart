@@ -5,26 +5,8 @@ release:
   name: release-test
 tests:
   - it: should use the default syncpolicy (automated) with default applicationRetryLimit (20)
-    set:
-      clusterGroup:
-        applications:
-          acm:
-            name: acm
-            namespace: open-cluster-management
-            project: hub
-            chart: acm
-            chartVersion: 0.1.*
-            ignoreDifferences:
-              - group: internal.open-cluster-management.io
-                kind: ManagedClusterInfo
-                jsonPointers:
-                  - /spec/loggingCA
-          vault:
-            name: vault
-            namespace: vault
-            project: hub
-            chart: hashicorp-vault
-            chartVersion: 0.1.*
+    values:
+      - ./application_sync_policies_values.yaml
     asserts:
       - isKind:
           of: Application
@@ -37,30 +19,28 @@ tests:
             retry:
               limit: 20
 
-  - it: should use null on all app if syncpolicy set to manual if set in global
+  - it: should use the default syncpolicy (automated) with custom global applicationRetryLimit (100)
+    values:
+      - ./application_sync_policies_values.yaml
     set:
       global:
         options:
-           syncPolicy: Manual
-      clusterGroup:
-        applications:
-          acm:
-            name: acm
-            namespace: open-cluster-management
-            project: hub
-            chart: acm
-            chartVersion: 0.1.*
-            ignoreDifferences:
-              - group: internal.open-cluster-management.io
-                kind: ManagedClusterInfo
-                jsonPointers:
-                  - /spec/loggingCA
-          vault:
-            name: vault
-            namespace: vault
-            project: hub
-            chart: hashicorp-vault
-            chartVersion: 0.1.*
+           applicationRetryLimit: 100
+    asserts:
+      - isSubset:
+          path: spec.syncPolicy
+          content:
+            automated: {}
+            retry:
+              limit: 100
+
+  - it: should use null on all app if syncpolicy set to manual if set in global
+    values:
+      - ./application_sync_policies_values.yaml
+    set:
+      global:
+        options:
+          syncPolicy: Manual
     asserts:
       - isKind:
           of: Application
@@ -70,27 +50,13 @@ tests:
           path: spec.syncPolicy
 
   - it: should use manual only on an app if syncpolicy set to manual in app
+    values:
+      - ./application_sync_policies_values.yaml
     set:
       clusterGroup:
         applications:
           acm:
             syncPolicy: Manual
-            name: acm
-            namespace: open-cluster-management
-            project: hub
-            chart: acm
-            chartVersion: 0.1.*
-            ignoreDifferences:
-              - group: internal.open-cluster-management.io
-                kind: ManagedClusterInfo
-                jsonPointers:
-                  - /spec/loggingCA
-          vault:
-            name: vault
-            namespace: vault
-            project: hub
-            chart: hashicorp-vault
-            chartVersion: 0.1.*
     asserts:
       - isKind:
           of: Application
@@ -112,6 +78,8 @@ tests:
               limit: 20
 
   - it: should use custom set syncpolicy set in app
+    values:
+      - ./application_sync_policies_values.yaml
     set:
       clusterGroup:
         applications:
@@ -120,22 +88,6 @@ tests:
               custom:
                 somethingCustom: 
                     customKey: "customValue"
-            name: acm
-            namespace: open-cluster-management
-            project: hub
-            chart: acm
-            chartVersion: 0.1.*
-            ignoreDifferences:
-              - group: internal.open-cluster-management.io
-                kind: ManagedClusterInfo
-                jsonPointers:
-                  - /spec/loggingCA
-          vault:
-            name: vault
-            namespace: vault
-            project: hub
-            chart: hashicorp-vault
-            chartVersion: 0.1.*
     asserts:
       - isKind:
           of: Application
