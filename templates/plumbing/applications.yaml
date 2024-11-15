@@ -176,13 +176,21 @@ spec:
   {{- if .ignoreDifferences }}
   ignoreDifferences: {{ .ignoreDifferences | toPrettyJson }}
   {{- end }}
-  {{- if .syncPolicy }}
+  {{ $syncpolicy := coalesce .syncPolicy $.Values.global.options.syncPolicy }}
+  {{- if and (kindIs "string" $syncpolicy) (eq ($syncpolicy | lower) "manual") }}
+  syncPolicy: null
+  {{- else if and (kindIs "string" $syncpolicy) (eq ($syncpolicy | lower)  "automatic") }}
+  syncPolicy:
+    automated: {}
+    retry:
+      limit: {{ default 20 $.Values.global.options.applicationRetryLimit }}
+  {{- else if $syncpolicy }}
   syncPolicy: {{ .syncPolicy | toPrettyJson }}
   {{- else }}
   syncPolicy:
     automated: {}
     retry:
-      limit: {{ default 20 $.Values.global.applicationRetryLimit }}
+      limit: {{ default 20 $.Values.global.options.applicationRetryLimit }}
   {{- end }}{{- /* .syncPolicy */}}
 {{- end }}{{- /* if .disabled */}}
 {{- end }}{{- /* range .Values.clusterGroup.applications */}}
