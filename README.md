@@ -58,7 +58,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | global.extraValueFiles | list | `[]` |  |
 | global.options.applicationRetryLimit | int | `20` |  |
 | global.options.installPlanApproval | string | `"Automatic"` |  |
-| global.options.syncPolicy | string | `"Automatic"` | This is the default value used for all applications always and only if the syncPolicy attribute is not defined in inside .Values.clusterGroup.applications. |
+| global.options.syncPolicy | string | `"Automatic"` | This is the default value used for all applications, but only when the syncPolicy attribute is not explicitly defined within .Values.clusterGroup.applications. |
 | global.options.useCSV | bool | `true` |  |
 | global.pattern | string | `"common"` |  |
 | global.secretStore.backend | string | `"vault"` |  |
