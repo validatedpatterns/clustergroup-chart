@@ -6,6 +6,7 @@ global:
   targetRevision: main
   options:
     useCSV: True
+    # -- This defines the global syncpolicy. If set to "Manual", no syncPolicy object will be set, if set to "Automatic" syncPolicy will be set to {automated: {}, retry: { limit: global.options.applicationRetryLimit }}, if set to an object it will be passed directly to the syncPolicy field of the application. Each application can override this
     syncPolicy: Automatic
     installPlanApproval: Automatic
     applicationRetryLimit: 20

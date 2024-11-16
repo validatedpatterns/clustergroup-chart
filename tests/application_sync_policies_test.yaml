@@ -1,0 +1,113 @@
+suite: Test application syncPolicy
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should use the default syncpolicy (automated) with default applicationRetryLimit (20)
+    values:
+      - ./application_sync_policies_values.yaml
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 2
+      - isSubset:
+          path: spec.syncPolicy
+          content:
+            automated: {}
+            retry:
+              limit: 20
+
+  - it: should use the default syncpolicy (automated) with custom global applicationRetryLimit (100)
+    values:
+      - ./application_sync_policies_values.yaml
+    set:
+      global:
+        options:
+           applicationRetryLimit: 100
+    asserts:
+      - isSubset:
+          path: spec.syncPolicy
+          content:
+            automated: {}
+            retry:
+              limit: 100
+
+  - it: should use null on all app if syncpolicy set to manual if set in global
+    values:
+      - ./application_sync_policies_values.yaml
+    set:
+      global:
+        options:
+          syncPolicy: Manual
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 2
+      - isNullOrEmpty:
+          path: spec.syncPolicy
+
+  - it: should use manual only on an app if syncpolicy set to manual in app
+    values:
+      - ./application_sync_policies_values.yaml
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            syncPolicy: Manual
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isNullOrEmpty:
+          path: spec.syncPolicy
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isSubset:
+          path: spec.syncPolicy
+          content:
+            automated: {}
+            retry:
+              limit: 20
+
+  - it: should use custom set syncpolicy set in app
+    values:
+      - ./application_sync_policies_values.yaml
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            syncPolicy:
+              custom:
+                somethingCustom: 
+                    customKey: "customValue"
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isSubset:
+          path: spec.syncPolicy
+          content:
+            custom:
+              somethingCustom: 
+                customKey: "customValue"
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isSubset:
+          path: spec.syncPolicy
+          content:
+            automated: {}
+            retry:
+              limit: 20

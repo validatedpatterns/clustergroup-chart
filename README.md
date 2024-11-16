@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.3](https://img.shields.io/badge/Version-0.9.3-informational?style=flat-square)
+![Version: 0.9.12](https://img.shields.io/badge/Version-0.9.12-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -25,6 +25,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.argoCD.resourceHealthChecks[0].check | string | `"hs = {}\nif obj.status ~= nil then\n  if obj.status.phase ~= nil then\n    if obj.status.phase == \"Pending\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    elseif obj.status.phase == \"Bound\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    end\n  end\nend\nhs.status = \"Progressing\"\nhs.message = \"Waiting for PVC\"\nreturn hs\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].kind | string | `"PersistentVolumeClaim"` |  |
 | clusterGroup.argoCD.resourceTrackingMethod | string | `"label"` |  |
+| clusterGroup.extraObjects | object | `{}` |  |
 | clusterGroup.imperative.activeDeadlineSeconds | int | `3600` |  |
 | clusterGroup.imperative.adminClusterRoleName | string | `"imperative-admin-cluster-role"` |  |
 | clusterGroup.imperative.adminServiceAccountCreate | bool | `true` |  |
@@ -54,11 +55,10 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.sharedValueFiles | list | `[]` |  |
 | clusterGroup.subscriptions | object | `{}` |  |
 | clusterGroup.targetCluster | string | `"in-cluster"` |  |
-| enabled | string | `"all"` |  |
 | global.extraValueFiles | list | `[]` |  |
 | global.options.applicationRetryLimit | int | `20` |  |
 | global.options.installPlanApproval | string | `"Automatic"` |  |
-| global.options.syncPolicy | string | `"Automatic"` |  |
+| global.options.syncPolicy | string | `"Automatic"` | This defines the global syncpolicy. If set to "Manual", no syncPolicy object will be set, if set to "Automatic" syncPolicy will be set to {automated: {}, retry: { limit: global.options.applicationRetryLimit }}, if set to an object it will be passed directly to the syncPolicy field of the application. Each application can override this |
 | global.options.useCSV | bool | `true` |  |
 | global.pattern | string | `"common"` |  |
 | global.secretStore.backend | string | `"vault"` |  |
