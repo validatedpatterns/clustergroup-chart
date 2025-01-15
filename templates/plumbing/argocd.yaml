@@ -33,13 +33,13 @@ spec:
         return hs
       end
 
-      if obj.status.compliant == nil or obj.status.compliant == "Pending" then
+      if obj.status.compliant == nil then
         hs.status = "Progressing"
         hs.message = "Waiting for the status to be reported"
         return hs
       end
 
-      if obj.status.compliant == "Compliant" then
+      if obj.status.compliant == "Compliant" or obj.status.compliant == "Pending" then
         hs.status = "Healthy"
       else
         hs.status = "Degraded"
