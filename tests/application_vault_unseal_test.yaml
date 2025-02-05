@@ -1,0 +1,160 @@
+suite: Test unsealVaultJob
+templates:
+  - templates/imperative/unsealjob.yaml
+release:
+  name: release-test
+tests:
+  - it: should not output an unsealjob by default
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render the unsealVault job when the application dict has hashicorp-vault but when isHubCluster is false
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            ignoreDifferences:
+              - group: internal.open-cluster-management.io
+                kind: ManagedClusterInfo
+                jsonPointers:
+                  - /spec/loggingCA
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  - it: should render the unsealVault job when the application dict does not have the hashicorp-vault but when isHubCluster is true
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: true
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            ignoreDifferences:
+              - group: internal.open-cluster-management.io
+                kind: ManagedClusterInfo
+                jsonPointers:
+                  - /spec/loggingCA
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  - it: should render the unsealVault job when the application dict has hashicorp-vault but when isHubCluster is true
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            ignoreDifferences:
+              - group: internal.open-cluster-management.io
+                kind: ManagedClusterInfo
+                jsonPointers:
+                  - /spec/loggingCA
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  - it: should not render the unsealVault job when the application dict does not have hashicorp-vault and when isHubCluster is false
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            ignoreDifferences:
+              - group: internal.open-cluster-management.io
+                kind: ManagedClusterInfo
+                jsonPointers:
+                  - /spec/loggingCA
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render the unsealVault job when the application list has hashicorp-vault but when isHubCluster is false
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          - name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            ignoreDifferences:
+              - group: internal.open-cluster-management.io
+                kind: ManagedClusterInfo
+                jsonPointers:
+                  - /spec/loggingCA
+          - name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  - it: should not render the unsealVault job when the application obj is unset and when isHubCluster is false
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+    asserts:
+      - hasDocuments:
+          count: 0
