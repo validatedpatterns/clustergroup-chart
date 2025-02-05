@@ -568,7 +568,6 @@
       },
       "required": [
         "name",
-        "path",
         "project"
       ],
       "title": "Applications"
