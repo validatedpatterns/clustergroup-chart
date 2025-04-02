@@ -1,5 +1,6 @@
 {{- range .Values.clusterGroup.subscriptions }}
 {{- $subs := . }}
+{{- if $subs.name }}
 {{- $installPlanValue := .installPlanApproval }}
 
 {{- if $subs.namespaces }}
@@ -115,4 +116,5 @@ spec:
           {{- end }}
 ---
 {{- end }}{{/* if $subs.sequenceJob */}}
+{{- end }}{{/* if $subs.name */}}
 {{- end }}{{/* range .Values.clusterGroup.subscriptions */}}
