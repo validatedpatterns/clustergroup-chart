@@ -277,7 +277,7 @@
         "sharedValueFiles": {
             "type": "array",
             "description": "Templated value file paths."
-	},
+        },
         "scheduler": {
           "type": "object",
           "description": "If set, it will become the spec of the scheduler/cluster in the managed cluster."
@@ -391,7 +391,7 @@
         },
         "extraObjects": {
           "type": "object",
-          "description": "Extra objects to add at the clustergroup level. Expected to be ArgoCD Resource Hooks." 
+          "description": "Extra objects to add at the clustergroup level. Expected to be ArgoCD Resource Hooks."
         },
         "managedClusterGroups": {
           "anyOf": [
@@ -430,15 +430,15 @@
       "additionalProperties": true,
       "properties": {
         "name": {
-	        "type": "string",
-	        "description": "Name of the namespace."
+          "type": "string",
+          "description": "Name of the namespace."
         },
-	      "labels": {
-	        "type": "object"
-	      },
-	      "annotations": {
+        "labels": {
           "type": "object"
-	      }
+        },
+        "annotations": {
+          "type": "object"
+        }
       }
     },
     "Nodes": {
@@ -453,9 +453,9 @@
         "labels": {
           "type": "object"
         },
-	      "annotations": {
+        "annotations": {
           "type": "object"
-	      }
+        }
       }
     },
     "NameValue": {
