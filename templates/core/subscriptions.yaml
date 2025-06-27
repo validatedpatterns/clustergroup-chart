@@ -26,14 +26,7 @@ spec:
   {{- end }} {{/* if $subs.channel */}}
   installPlanApproval: {{ coalesce $installPlanValue $.Values.global.options.installPlanApproval }}
   {{- if $subs.config }}
-  {{- if $subs.config.env }}
-  config:
-    env:
-  {{- range $subs.config.env }}
-      - name: {{ .name }}
-        value: {{ .value }}
-  {{- end }}{{/* range $subs.config.env */}}
-  {{- end }}{{/* if $subs.config.env */}}
+  config: {{ toYaml $subs.config | nindent 4 }}
   {{- end }}{{/* if $subs.config */}}
   {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ $subs.csv }}
@@ -64,14 +57,7 @@ spec:
   {{- end }}
   installPlanApproval: {{ coalesce  $installPlanValue $.Values.global.options.installPlanApproval }}
   {{- if $subs.config }}
-  {{- if $subs.config.env }}
-  config:
-    env:
-  {{- range $subs.config.env }}
-      - name: {{ .name }}
-        value: {{ .value }}
-  {{- end }}{{/* range $subs.config.env */}}
-  {{- end }}{{/* if $subs.config.env */}}
+  config: {{ toYaml $subs.config | nindent 4 }}
   {{- end }}{{/* if $subs.config */}}
   {{- if $.Values.global.options.useCSV }}
   startingCSV: {{ $subs.csv }}
