@@ -1,6 +1,8 @@
 global:
   extraValueFiles: []
   pattern: common
+  secretLoader:
+    disabled: false
   secretStore:
     backend: "vault"
   targetRevision: main
