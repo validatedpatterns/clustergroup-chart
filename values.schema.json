@@ -6,6 +6,9 @@
       "type": "object",
       "additionalProperties": true,
       "properties": {
+        "secretLoader": {
+          "$ref": "#/definitions/SecretLoader"
+        },
         "secretStore": {
           "$ref": "#/definitions/SecretStore"
         },
@@ -23,6 +26,17 @@
         "clusterGroup"
       ],
       "title": "ValidatedPatterns"
+    },
+    "SecretLoader": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether to disable secret loaders",
+          "default": false
+        }
+      }
     },
     "SecretStore": {
       "type": "object",
