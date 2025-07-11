@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.18](https://img.shields.io/badge/Version-0.9.18-informational?style=flat-square)
+![Version: 0.9.19](https://img.shields.io/badge/Version-0.9.19-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -61,6 +61,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | global.options.syncPolicy | string | `"Automatic"` | This defines the global syncpolicy. If set to "Manual", no syncPolicy object will be set, if set to "Automatic" syncPolicy will be set to {automated: {}, retry: { limit: global.options.applicationRetryLimit }}, if set to an object it will be passed directly to the syncPolicy field of the application. Each application can override this |
 | global.options.useCSV | bool | `true` |  |
 | global.pattern | string | `"common"` |  |
+| global.secretLoader.disabled | bool | `false` |  |
 | global.secretStore.backend | string | `"vault"` |  |
 | global.targetRevision | string | `"main"` |  |
 | secretStore.kind | string | `"ClusterSecretStore"` |  |
