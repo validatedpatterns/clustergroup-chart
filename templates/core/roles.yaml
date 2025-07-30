@@ -1,0 +1,12 @@
+{{- range $key, $role := .Values.clusterGroup.rbac.createRoles }}
+{{- if not $role.disabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $role.name }}
+  namespace: {{ $role.namespace }}
+rules:
+{{ $role.rules | toYaml | nindent 2 }}
+{{- end }} {{- /* if not $role.disabled */}}
+{{- end }} {{- /* range */}}

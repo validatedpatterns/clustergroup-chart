@@ -6,6 +6,10 @@ A Helm chart to create per-clustergroup ArgoCD applications and any required nam
 
 This chart is used to set up the basic building blocks in [Validated Patterns](https://validatedpatterns.io)
 
+### Notable changes
+
+* v0.9.20: Add optional RBAC structure to create roles, clusterroles and rolebindings. Needed for OLMv1 but potentially useful in other scenarios as well.
+
 **Homepage:** <https://github.com/validatedpatterns/clustergroup-chart>
 
 ## Maintainers
@@ -52,6 +56,9 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.namespaces | list | `[]` |  |
 | clusterGroup.nodes | list | `[]` |  |
 | clusterGroup.projects | list | `[]` |  |
+| clusterGroup.rbac.createClusterRoles | object | `{}` |  |
+| clusterGroup.rbac.createRoles | object | `{}` |  |
+| clusterGroup.rbac.serviceAccounts | object | `{}` |  |
 | clusterGroup.sharedValueFiles | list | `[]` |  |
 | clusterGroup.subscriptions | object | `{}` |  |
 | clusterGroup.targetCluster | string | `"in-cluster"` |  |

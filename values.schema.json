@@ -397,6 +397,9 @@
             "$ref": "#/definitions/Applications"
           }
         },
+        "rbac": {
+          "$ref": "#/definitions/RBAC"
+        },
         "argoCD": {
           "$ref": "#/definitions/ArgoCD"
         },
@@ -585,6 +588,133 @@
         "project"
       ],
       "title": "Applications"
+    },
+    "RBAC": {
+      "type": "object",
+      "description": "serviceAccounts and roles for cluster usage. Rolebindings are automatically inferred from serviceAccount role and clusterRole assignments.",
+      "additionalProperties": false,
+      "properties": {
+        "serviceAccounts": {
+          "type": "object",
+          "description": "Service accounts to create with role bindings",
+          "additionalProperties": {
+            "$ref": "#/definitions/ServiceAccount"
+          }
+        },
+        "createRoles": {
+          "type": "object",
+          "description": "Roles to include in implicit rolebindings. These can be created in the RBAC structure here or pre-existing.",
+          "additionalProperties": {
+            "$ref": "#/definitions/Role"
+          }
+        },
+        "createClusterRoles": {
+          "type": "object",
+          "description": "Cluster roles to include in implicit clusterrolebindings. These can be created in the RBAC structure here or pre-existing.",
+          "additionalProperties": {
+            "$ref": "#/definitions/Role"
+          }
+        }
+      }
+    },
+    "ServiceAccount": {
+      "type": "object",
+      "description": "Service account configuration with implicit role bindings",
+      "additionalProperties": false,
+      "properties": {
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether to disable creation of this service account",
+          "default": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the service account"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Namespace for the service account"
+        },
+        "roleBindings": {
+          "type": "object",
+          "description": "Rolebindings to create for the serviceAccount",
+          "properties": {
+            "roles": {
+              "type": "array",
+              "description": "role names to create rolebindings with this serviceaccount"
+            },
+            "clusterRoles": {
+              "type": "array",
+              "description": "cluster role names to create rolebindings with this serviceaccount"
+            }
+          }
+        }
+      },
+      "required": ["name", "namespace", "roleBindings"]
+    },
+    "Role": {
+      "type": "object",
+      "description": "Role or ClusterRole configuration",
+      "additionalProperties": false,
+      "properties": {
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether to disable creation of this role",
+          "default": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the role"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Namespace of the role"
+        },
+        "rules": {
+          "type": "array",
+          "description": "RBAC rules for this role",
+          "items": {
+            "$ref": "#/definitions/RoleRule"
+          }
+        }
+      },
+      "required": ["name", "rules"]
+    },
+    "RoleRule": {
+      "type": "object",
+      "description": "RBAC rule configuration",
+      "additionalProperties": false,
+      "properties": {
+        "apiGroups": {
+          "type": "array",
+          "description": "List of API groups",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "description": "List of resources",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resourceNames": {
+          "type": "array",
+          "description": "List of resource names",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verbs": {
+          "type": "array",
+          "description": "List of verbs",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["verbs"]
     },
     "ArgoCD": {
       "type": "object",

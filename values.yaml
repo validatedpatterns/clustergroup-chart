@@ -159,6 +159,39 @@ clusterGroup:
 #                    echo "Storage class ocs-storagecluster-ceph-rbd found, exiting"
 #                    exit 0
 
+  rbac:
+    serviceAccounts: {}
+#     saname:
+#       disabled: false
+#       name: my-service-account
+#       namespace: my-namespace
+#       roleBindings:
+#         roles:
+#           - name
+#         clusterRoles:
+#           - name
+
+    createClusterRoles: {}
+#     rolename:
+#       disabled: false
+#       name:
+#       rules:
+#         - apiGroups:
+#           resources:
+#           resourceNames:
+#           verbs:
+
+    createRoles: {}
+#     rolename:
+#       disabled: false
+#       name:
+#       namespace:
+#       rules:
+#         - apiGroups:
+#           resources:
+#           resourceNames:
+#           verbs:
+
 secretStore:
   name: vault-backend
   kind: ClusterSecretStore
