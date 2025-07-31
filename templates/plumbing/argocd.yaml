@@ -92,7 +92,7 @@ spec:
       hs.message = "Waiting for PVC"
       return hs
 
-  # FIXME(bandini): To be dropped once 49431b9add9393ef2ece78d4f63968b6c10276e0 in argocd is in a relased version
+  # Drop once upstream argo cd handles the stopped field correctly
   - kind: InferenceService
     group: serving.kserve.io
     check: |
