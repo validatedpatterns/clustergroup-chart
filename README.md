@@ -1,10 +1,14 @@
 # clustergroup
 
-![Version: 0.9.20](https://img.shields.io/badge/Version-0.9.20-informational?style=flat-square)
+![Version: 0.9.21](https://img.shields.io/badge/Version-0.9.21-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
 This chart is used to set up the basic building blocks in [Validated Patterns](https://validatedpatterns.io)
+
+### Notable changes
+
+* v0.9.21: Include dependency on vp-rbac. This will be needed to support OLMv1 subscriptions soon.
 
 **Homepage:** <https://github.com/validatedpatterns/clustergroup-chart>
 
@@ -13,6 +17,12 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | Name | Email | Url |
 | ---- | ------ | --- |
 | Validated Patterns Team | <validatedpatterns@googlegroups.com> |  |
+
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://charts.validatedpatterns.io | vp-rbac | 0.1.* |
 
 ## Values
 
