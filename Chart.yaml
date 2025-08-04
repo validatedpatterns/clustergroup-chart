@@ -9,3 +9,7 @@ maintainers:
   - name: Validated Patterns Team
     email: validatedpatterns@googlegroups.com
 icon: https://validatedpatterns.io/images/validated-patterns.png
+dependencies:
+  - name: vp-rbac
+    version: "0.1.*"
+    repository: "https://charts.validatedpatterns.io"
