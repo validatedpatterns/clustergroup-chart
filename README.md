@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.26](https://img.shields.io/badge/Version-0.9.26-informational?style=flat-square)
+![Version: 0.9.27](https://img.shields.io/badge/Version-0.9.27-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -8,6 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.27: Introduce support for OLMv1 Subscriptions
 * v0.9.25: One more update after fixing a relative path issue in the repository builder
 * v0.9.23: Update dependencies on helm repository builder.
 * v0.9.21: Include dependency on vp-rbac. This will be needed to support OLMv1 subscriptions soon.

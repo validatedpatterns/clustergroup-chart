@@ -3,7 +3,7 @@ description: A Helm chart to create per-clustergroup ArgoCD applications and any
 keywords:
 - pattern
 name: clustergroup
-version: 0.9.26
+version: 0.9.27
 home: https://github.com/validatedpatterns/clustergroup-chart
 maintainers:
   - name: Validated Patterns Team
