@@ -119,6 +119,15 @@ clusterGroup:
 #    channel: release-2.3
 #    csv: v2.3.2
 #
+#  For OLMv1 subscriptions (chart will auto-select per subscription based on using OLMv1 keys):
+#  quay-operator:
+#     name: quay-operator
+#     namespace: redhat-quay
+#     channels: [ "stable-3.12" ]
+#     serviceAccountName: quay-sa
+#     version: '3.12.*'
+#     upgradeConstraintPolicy: SelfCertified
+
   projects: []
 #  - datacenter
 #

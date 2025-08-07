@@ -975,7 +975,8 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of subscription or packageName of OLMv1 subscription"
         },
         "namespaces": {
           "type": "array"
@@ -1016,6 +1017,25 @@
           "type": "object",
           "description": "Will create an ArgoCD Resource Hook to help sequence subscription installs if needed",
           "$ref": "#/definitions/SequenceJob"
+        },
+        "channels": {
+          "type": "array",
+          "description": "List of channels for ClusterExtension when using OLMv1",
+          "items": {
+            "type": "string"
+          }
+        },
+        "version": {
+          "type": "string",
+          "description": "Version for ClusterExtension when using OLMv1"
+        },
+        "upgradeConstraintPolicy": {
+          "type": "string",
+          "description": "Upgrade constraint policy for ClusterExtension when using OLMv1"
+        },
+        "serviceAccountName": {
+          "type": "string",
+          "description": "Service account name for ClusterExtension when using OLMv1"
         }
       },
       "required": [
