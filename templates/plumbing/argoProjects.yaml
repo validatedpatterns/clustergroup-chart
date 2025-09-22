@@ -1,4 +1,4 @@
-{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
+{{ $namespace := include "clustergroup.template.argocdnamespace" . | trim }}
 {{- /*
   We first check if projects are defined as a map.  If it is we call
   our helper function in _helpers.tpl to process the projects

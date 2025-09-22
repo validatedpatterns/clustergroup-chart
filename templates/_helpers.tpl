@@ -121,9 +121,9 @@ Default always defined valueFiles to be included in Applications but with a pref
 {{- end }} {{/* if $.Values.global.extraValueFiles */}}
 {{- end }} {{/* clustergroup.app.globalvalues.prefixedvaluefiles */}}
 
-{{/* 
+{{/*
 Helper function to generate AppProject from a map object
-Called from common/clustergroup/templates/plumbing/projects.yaml 
+Called from common/clustergroup/templates/plumbing/projects.yaml
 */}}
 {{- define "clustergroup.template.plumbing.projects.map" -}}
 {{- $projects := index . 0 }}
@@ -194,18 +194,19 @@ status: {}
 {{- end }}
 {{- end }}
 
-{{/* 
+{{/*
   Helper function to generate Namespaces from a map object.
   Arguments passed as a list object are:
   0 - The namespace hash keys
   1 - Pattern name from .Values.global.pattern
   2 - Cluster group name from .Values.clusterGroup.name
-  Called from common/clustergroup/templates/core/namespaces.yaml 
+  Called from common/clustergroup/templates/core/namespaces.yaml
 */}}
 {{- define "clustergroup.template.core.namespaces.map" -}}
 {{- $ns := index . 0 }}
 {{- $patternName := index . 1 }}
 {{- $clusterGroupName := index . 2 }}
+{{- $root := index . 3 }}
 
 {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
 {{- if or (eq $v nil) (not $v.disabled) }} {{- /* Process if $v is nil or disabled is false */}}
@@ -216,7 +217,7 @@ metadata:
   name: {{ $k }}
   {{- if ne $v nil }}
   labels:
-    argocd.argoproj.io/managed-by: {{ $patternName }}-{{ $clusterGroupName }}
+    argocd.argoproj.io/managed-by: {{ include "clustergroup.template.argocdnamespace" $root }}
     {{- if $v.labels }}
     {{- range $key, $value := $v.labels }} {{- /* We loop here even though the map has always just one key */}}
     {{ $key }}: {{ $value | default "" | quote }}
@@ -225,14 +226,14 @@ metadata:
   {{- include "clustergroup.annotations" $v.annotations | nindent 2 }}
   {{- else }}
   labels:
-    argocd.argoproj.io/managed-by: {{ $patternName }}-{{ $clusterGroupName }}
+    argocd.argoproj.io/managed-by: {{ include "clustergroup.template.argocdnamespace" $root }}
   {{- end }}
 spec:
 {{- end }}{{- /* if not disabled */}}
 {{- end }}{{- /* range $k, $v := $ns */}}
 {{- end }}
 
-{{- /* 
+{{- /*
   Helper function to generate OperatorGroup from a map object.
   Arguments passed as a list object are:
   0 - The namespace hash keys
@@ -320,3 +321,14 @@ false
 false
 {{- end -}}
 {{- end }}
+
+{{- /*
+  Helper function to generate argocd namespace name
+*/ -}}
+{{- define "clustergroup.template.argocdnamespace" -}}
+{{- if .Values.global.singleArgoCD }}
+{{- .Values.global.vpArgoNamespace -}}
+{{- else }}
+{{- .Values.global.pattern }}-{{ .Values.clusterGroup.name -}}
+{{- end }}{{- /* if .singleArgoCD */}}
+{{- end }} {{- /* End define  "clustergroup.template.argocdnamespace" */}}

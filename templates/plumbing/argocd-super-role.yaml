@@ -20,6 +20,8 @@ subjects:
     name: {{ $.Values.global.vpArgoNamespace }}-argocd-server
     namespace: {{ $.Values.global.vpArgoNamespace }}
 ---
+{{- if $.Values.global.singleArgoCD }}
+{{- else }}
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -43,3 +45,4 @@ subjects:
   - kind: ServiceAccount
     name: {{ .Values.clusterGroup.name }}-gitops-argocd-dex-server
     namespace: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}
+{{- end }}{{- /* if .singleArgoCD */}}
