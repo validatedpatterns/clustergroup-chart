@@ -1,12 +1,12 @@
-{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
+{{- $namespace := include "clustergroup.gitops.namespace" . }}
 {{- /*
   We first check if projects are defined as a map.  If it is we call
   our helper function in _helpers.tpl to process the projects
-  described in the values file. This is to support issue 
+  described in the values file. This is to support issue
   https://github.com/validatedpatterns/common/issues/459 created by our customer.
 */ -}}
 {{- if kindIs "map" .Values.clusterGroup.projects }}
-{{- template "clustergroup.template.plumbing.projects.map" (list .Values.clusterGroup.projects $namespace $.Values.enabled) }}  
+{{- template "clustergroup.template.plumbing.projects.map" (list .Values.clusterGroup.projects $namespace $.Values.enabled) }}
 {{- else }}
 {{- range .Values.clusterGroup.projects }}
 apiVersion: argoproj.io/v1alpha1

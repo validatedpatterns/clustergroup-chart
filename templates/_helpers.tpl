@@ -81,9 +81,9 @@ Default always defined valueFiles to be included in Applications but with a pref
 {{- end }} {{/* if $.Values.global.extraValueFiles */}}
 {{- end }} {{/* clustergroup.app.globalvalues.prefixedvaluefiles */}}
 
-{{/* 
+{{/*
 Helper function to generate AppProject from a map object
-Called from common/clustergroup/templates/plumbing/projects.yaml 
+Called from common/clustergroup/templates/plumbing/projects.yaml
 */}}
 {{- define "clustergroup.template.plumbing.projects.map" -}}
 {{- $projects := index . 0 }}
@@ -117,9 +117,9 @@ status: {}
 {{- end }}
 {{- end }}
 
-{{/* 
+{{/*
   Helper function to generate AppProject from a list object.
-  Called from common/clustergroup/templates/plumbing/projects.yaml 
+  Called from common/clustergroup/templates/plumbing/projects.yaml
 */}}
 {{- define "clustergroup.template.plumbing.projects.list" -}}
 {{- $projects := index . 0 }}
@@ -152,13 +152,13 @@ status: {}
 {{- end }}
 {{- end }}
 
-{{/* 
+{{/*
   Helper function to generate Namespaces from a map object.
   Arguments passed as a list object are:
   0 - The namespace hash keys
   1 - Pattern name from .Values.global.pattern
   2 - Cluster group name from .Values.clusterGroup.name
-  Called from common/clustergroup/templates/core/namespaces.yaml 
+  Called from common/clustergroup/templates/core/namespaces.yaml
 */}}
 {{- define "clustergroup.template.core.namespaces.map" -}}
 {{- $ns := index . 0 }}
@@ -190,7 +190,7 @@ spec:
 {{- end }}{{- /* range $k, $v := $ns */}}
 {{- end }}
 
-{{- /* 
+{{- /*
   Helper function to generate OperatorGroup from a map object.
   Arguments passed as a list object are:
   0 - The namespace hash keys
@@ -240,3 +240,35 @@ spec:
   {{- end }}{{- /* End range $k, $v = $ns */}}
 {{- end }}{{- /* End of if operatorGroupExcludes */}}
 {{- end }} {{- /* End define  "clustergroup.template.core.operatorgroup.map" */}}
+
+{{/*
+Create a safe, DNS-compliant namespace.
+
+This template calculates the maximum allowed length for the namespace based on the other
+parts of the final URL. If the original namespace string (pattern + cluster group name)
+is too long, it truncates it and appends a short hash for uniqueness.
+*/}}
+{{- define "clustergroup.gitops.namespace" -}}
+
+{{- $clusterGroupName := .Values.clusterGroup.name -}}
+{{- $pattern := .Values.global.pattern -}}
+{{- $fullNamespace := printf "%s-%s" $pattern $clusterGroupName -}}
+{{- $urlPrefix := printf "%s-gitops-server-" $clusterGroupName -}}
+
+{{- /*
+Calculate the max allowed length for the namespace by subtracting the
+prefix's length from the 63-character DNS label limit.
+*/ -}}
+{{- $maxNamespaceLength := sub 63 (len $urlPrefix) -}}
+
+{{- if gt (len $fullNamespace) $maxNamespaceLength -}}
+  {{- /* If the namespace is too long, truncate it and add an 8-char hash suffix */ -}}
+  {{- $hash := $fullNamespace | sha256sum | trunc 8 -}}
+  {{- /* Calculate space for the truncated part, leaving room for the hyphen and hash */ -}}
+  {{- $truncLength := sub $maxNamespaceLength (len $hash) 1 -}}
+  {{- printf "%s-%s" ($fullNamespace | trunc $truncLength) $hash -}}
+{{- else -}}
+  {{- /* If the namespace is already short enough, use it as is */ -}}
+  {{- $fullNamespace -}}
+{{- end -}}{{- /* End of if gt (len $fullNamespace) $maxNamespaceLength */}}
+{{- end -}}{{- /* End define "clustergroup.gitops.namespace" */}}

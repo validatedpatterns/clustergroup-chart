@@ -1,4 +1,4 @@
-{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
+{{- $namespace := include "clustergroup.gitops.namespace" . }}
 {{- range .Values.clusterGroup.applications }}
 {{- if .disabled }} {{- /* This allows us to null out an Application entry by specifying disabled: true in an override file */}}
 {{- else }}
@@ -43,7 +43,7 @@ spec:
       helm:
         ignoreMissingValueFiles: true
         values: |
-          extraParametersNested: 
+          extraParametersNested:
           {{- range $k, $v := $.Values.extraParametersNested }}
             {{ $k }}: {{ printf "%s" $v | quote }}
           {{- end }}

@@ -1,4 +1,4 @@
-{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
+{{- $namespace := include "clustergroup.gitops.namespace" . }}
 apiVersion: argoproj.io/v1beta1
 kind: ArgoCD
 metadata:
