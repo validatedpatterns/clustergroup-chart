@@ -56,3 +56,38 @@ tests:
                 group: Bar
                 check: |
                   return true
+
+  - it: should render the default resourceExclusions correctly
+    documentIndex: 0
+    asserts:
+      - isSubset:
+          path: spec
+          content:
+            resourceExclusions: |
+              - apiGroups:
+                - tekton.dev
+                kinds:
+                - TaskRun
+                - PipelineRun
+
+  - it: should render custom resourceExclusions correctly
+    set:
+      clusterGroup:
+        argoCD:
+          resourceExclusions: |
+            - apiGroups:
+              - foo.bar
+              kinds:
+              - Foo
+              - Baz
+    documentIndex: 0
+    asserts:
+      - isSubset:
+          path: spec
+          content:
+            resourceExclusions: |
+              - apiGroups:
+                - foo.bar
+                kinds:
+                - Foo
+                - Baz
