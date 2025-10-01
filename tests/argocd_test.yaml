@@ -70,6 +70,25 @@ tests:
                 - TaskRun
                 - PipelineRun
 
+  - it: should render the default resourceExclusions correctly when excludeESO is true
+    documentIndex: 0
+    set:
+      global.excludeESO: true
+    asserts:
+      - isSubset:
+          path: spec
+          content:
+            resourceExclusions: |
+              - apiGroups:
+                - tekton.dev
+                kinds:
+                - TaskRun
+                - PipelineRun
+              - apiGroups:
+                - external-secrets.io
+                kinds:
+                - ExternalSecret
+
   - it: should render custom resourceExclusions correctly
     set:
       clusterGroup:
