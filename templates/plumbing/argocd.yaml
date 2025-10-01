@@ -11,9 +11,10 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
-# Adding health checks to argocd to prevent pvc resources
-# that aren't bound state from blocking deployments
   resourceHealthChecks:
+  # Adding health checks to argocd to prevent pvc resources
+  # that aren't bound state from blocking deployments
+  # https://www.github.com/argoproj/argo-cd/issues/12840 seems to be related
   - kind: PersistentVolumeClaim
     check: |
       hs = {}
