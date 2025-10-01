@@ -11,31 +11,12 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
 spec:
-  resourceHealthChecks:
-  # Adding health checks to argocd to prevent pvc resources
-  # that aren't bound state from blocking deployments
-  # https://www.github.com/argoproj/argo-cd/issues/12840 seems to be related
-  - kind: PersistentVolumeClaim
-    check: |
-      hs = {}
-      if obj.status ~= nil then
-        if obj.status.phase ~= nil then
-          if obj.status.phase == "Pending" then
-            hs.status = "Healthy"
-            hs.message = obj.status.phase
-            return hs
-          elseif obj.status.phase == "Bound" then
-            hs.status = "Healthy"
-            hs.message = obj.status.phase
-            return hs
-          end
-        end
-      end
-      hs.status = "Progressing"
-      hs.message = "Waiting for PVC"
-      return hs
+  {{- if and (hasKey $.Values.clusterGroup.argoCD "resourceHealthChecks") (not (empty $.Values.clusterGroup.argoCD.resourceHealthChecks)) }}
+  resourceHealthChecks: 
+{{- toYaml $.Values.clusterGroup.argoCD.resourceHealthChecks | nindent 2 }}
 
-  resourceTrackingMethod: {{ $.Values.clusterGroup.argoCD.resourceTrackingMethod}}
+  {{- end }}
+  resourceTrackingMethod: {{ $.Values.clusterGroup.argoCD.resourceTrackingMethod }}
   applicationInstanceLabelKey: argocd.argoproj.io/instance
   applicationSet:
     resources:

@@ -9,3 +9,50 @@ tests:
     asserts:
       - isKind:
           of: ArgoCD
+
+  - it: should render the default resourceHealthChecks correctly
+    documentIndex: 0
+    asserts:
+      - isSubset:
+          path: spec
+          content:
+            resourceHealthChecks:
+            - kind: PersistentVolumeClaim
+              check: |
+                hs = {}
+                if obj.status ~= nil then
+                  if obj.status.phase ~= nil then
+                    if obj.status.phase == "Pending" then
+                      hs.status = "Healthy"
+                      hs.message = obj.status.phase
+                      return hs
+                    elseif obj.status.phase == "Bound" then
+                      hs.status = "Healthy"
+                      hs.message = obj.status.phase
+                      return hs
+                    end
+                  end
+                end
+                hs.status = "Progressing"
+                hs.message = "Waiting for PVC"
+                return hs
+
+  - it: should render custom resourceHealthChecks correctly
+    set:
+      clusterGroup:
+        argoCD:
+          resourceHealthChecks:
+            - kind: Foo
+              group: Bar
+              check: |
+                return true
+    documentIndex: 0
+    asserts:
+      - isSubset:
+          path: spec
+          content:
+            resourceHealthChecks:
+              - kind: Foo
+                group: Bar
+                check: |
+                  return true
