@@ -1,0 +1,142 @@
+suite: Test projects and argoProjects
+templates:
+  - templates/plumbing/argoProjects.yaml
+release:
+  name: release-test
+tests:
+  - it: should not output projects when with default values (no projects nor argoProjects are set)
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not output projects when argoProjects is set to []
+    set:
+      clusterGroup:
+        argoProjects: []
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not output projects when projects is set to []
+    set:
+      clusterGroup:
+        projects: []
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not fail when projects and argoProjects are both removed
+    set:
+      clusterGroup:
+        argoProjects: null
+        projects: null
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should fail when projects and argoProjects are both set to something via lists
+    set:
+      clusterGroup:
+        argoProjects: ["foo", "bar"]
+        projects: ["baz"]
+    asserts:
+      - failedTemplate: {}
+
+  - it: should fail when projects and argoProjects are both set to something via objects
+    set:
+      clusterGroup:
+        argoProjects: 
+          foo:
+          bar:
+        projects:
+          baz:
+    asserts:
+      - failedTemplate: {}
+
+  - it: should render correctly when argoProjects is set to something
+    set:
+      clusterGroup:
+        argoProjects: ["foo", "bar"]
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name  
+          value: foo
+        isSubset:
+          path: spec
+          content:
+            description: "Pattern foo"
+            destinations:
+            - namespace: '*'
+              server: '*'
+            clusterResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            namespaceResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            sourceRepos:
+            - '*'
+      - documentSelector:
+          path: metadata.name  
+          value: bar
+        isSubset:
+          path: spec
+          content:
+            description: "Pattern bar"
+            destinations:
+            - namespace: '*'
+              server: '*'
+            clusterResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            namespaceResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            sourceRepos:
+            - '*'
+
+  - it: should render correctly when projects is set to something
+    set:
+      clusterGroup:
+        projects: ["foo", "bar"]
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name  
+          value: foo
+        isSubset:
+          path: spec
+          content:
+            description: "Pattern foo"
+            destinations:
+            - namespace: '*'
+              server: '*'
+            clusterResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            namespaceResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            sourceRepos:
+            - '*'
+      - documentSelector:
+          path: metadata.name  
+          value: bar
+        isSubset:
+          path: spec
+          content:
+            description: "Pattern bar"
+            destinations:
+            - namespace: '*'
+              server: '*'
+            clusterResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            namespaceResourceWhitelist:
+            - group: '*'
+              kind: '*'
+            sourceRepos:
+            - '*'

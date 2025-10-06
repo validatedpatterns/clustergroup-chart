@@ -5,10 +5,22 @@
   described in the values file. This is to support issue 
   https://github.com/validatedpatterns/common/issues/459 created by our customer.
 */ -}}
-{{- if kindIs "map" .Values.clusterGroup.projects }}
-{{- template "clustergroup.template.plumbing.projects.map" (list .Values.clusterGroup.projects $namespace $.Values.enabled) }}  
+{{- /*
+  This template block iterates over the appropriate list based on which value 
+  was provided in the 'values.yaml' file, as enforced by the JSON Schema (oneOf).
+*/ -}}
+{{- $projects := list -}}
+
+{{- if .Values.clusterGroup.projects }}
+  {{- $projects = .Values.clusterGroup.projects -}}
+{{- else if .Values.clusterGroup.argoProjects }}
+  {{- $projects = .Values.clusterGroup.argoProjects -}}
+{{- end }}
+
+{{- if kindIs "map" $projects }}
+{{- template "clustergroup.template.plumbing.projects.map" (list $projects $namespace $.Values.enabled) }}  
 {{- else }}
-{{- range .Values.clusterGroup.projects }}
+{{- range $projects }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:

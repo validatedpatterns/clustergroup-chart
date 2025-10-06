@@ -1,0 +1,75 @@
+suite: Test argo projects inside application 
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render an application with a project
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        equal:
+          path: spec.project
+          value: hub
+
+  - it: should render an application with an argoProject
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            argoProject: hub
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        equal:
+          path: spec.project
+          value: hub
+
+  - it: should render an application without project or argoProject
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        equal:
+          path: spec.project
+          value: default
