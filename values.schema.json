@@ -637,10 +637,13 @@
       "required": [
         "name"
       ],
-      "oneOf": [
-        { "required": [ "project" ] },
-        { "required": [ "argoProject" ] }
-      ],
+      "not": {
+        "description": "Project and argoProject cannot both be set at the same time.",
+        "allOf": [
+          { "required": ["project"] },
+          { "required": ["argoProject"] }
+        ]
+      },
       "title": "Applications"
     },
     "ArgoCD": {
