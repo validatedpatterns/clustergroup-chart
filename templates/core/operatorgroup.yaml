@@ -54,18 +54,6 @@ kind: OperatorGroup
 metadata:
   name: {{ . }}-operator-group
   namespace: {{ . }}
-  {{- if (hasKey $v "labels") }}
-  labels:
-    {{- range $key, $value := $v.labels }}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}
-  {{- if (hasKey $v "annotations") }}
-  annotations:
-    {{- range $key, $value := $v.annotations }}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}
 spec:
   targetNamespaces:
   - {{ . }}
