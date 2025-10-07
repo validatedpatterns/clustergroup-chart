@@ -205,13 +205,14 @@ clusterGroup:
 #     version: '3.12.*'
 #     upgradeConstraintPolicy: SelfCertified
 
-  projects: []
+  # projects is deprecated, please use argoProjects
+  # argoProjects: []
 #  - datacenter
 #
   applications: {}
 #  - name: acm
 #    namespace: default
-#    project: datacenter
+#    argoProject: datacenter
 #    path: applications/acm
 
   extraObjects: {}

@@ -1,5 +1,6 @@
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
 {{- range .Values.clusterGroup.applications }}
+{{- $projectName := coalesce .argoProject .project "default" -}} {{- /* Read argoProject if set, otherwise .project and otherwise set it to "default" */}}
 {{- if .disabled }} {{- /* This allows us to null out an Application entry by specifying disabled: true in an override file */}}
 {{- else }}
 ---
@@ -22,7 +23,7 @@ spec:
   destination:
     name: {{ $.Values.clusterGroup.targetCluster }}
     namespace: {{ default $namespace .namespace }}
-  project: {{ .project }}
+  project: {{ $projectName }}
   {{- if .chartVersion }} {{- /* if .chartVersion is set we assume this is a multisource app */}}
   sources:
     - repoURL: {{ $.Values.global.repoURL }}
