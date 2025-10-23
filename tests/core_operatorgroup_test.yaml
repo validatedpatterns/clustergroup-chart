@@ -1,0 +1,85 @@
+suite: Test operatorgroup with various configurations
+templates:
+  - templates/core/operatorgroup.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create operator groups for string list namespaces
+    set:
+      clusterGroup:
+        namespaces:
+          - openshift-operators
+          - my-namespace
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: OperatorGroup
+
+  - it: should create operator groups for map-based namespaces
+    set:
+      clusterGroup:
+        namespaces:
+          openshift-operators:
+          my-namespace:
+            operatorGroup: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: OperatorGroup
+
+  - it: should skip namespaces with operatorGroup set to false
+    set:
+      clusterGroup:
+        namespaces:
+          enabled-namespace:
+            operatorGroup: true
+          disabled-namespace:
+            operatorGroup: false
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should respect operatorgroupExcludes
+    set:
+      clusterGroup:
+        namespaces:
+          - openshift-operators
+          - excluded-namespace
+          - included-namespace
+        operatorgroupExcludes:
+          - excluded-namespace
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: should handle custom targetNamespaces
+    set:
+      clusterGroup:
+        namespaces:
+          multi-target-ns:
+            targetNamespaces:
+              - target-ns-1
+              - target-ns-2
+              - target-ns-3
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: multi-target-ns-operator-group
+      - equal:
+          path: spec.targetNamespaces[0]
+          value: target-ns-1
+      - equal:
+          path: spec.targetNamespaces[1]
+          value: target-ns-2
+      - equal:
+          path: spec.targetNamespaces[2]
+          value: target-ns-3

@@ -1,0 +1,76 @@
+suite: Test trusted bundle CA configmap with various configurations
+templates:
+  - templates/plumbing/trusted-bundle-ca-configmap.yaml
+release:
+  name: release-test
+tests:
+  - it: should create trusted CA bundle configmap with default values
+    set:
+      global:
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: metadata.name
+          value: trusted-ca-bundle
+      - equal:
+          path: metadata.namespace
+          value: test-pattern-hub
+      - equal:
+          path: metadata.labels["config.openshift.io/inject-trusted-cabundle"]
+          value: "true"
+
+  - it: should create configmap with custom pattern and cluster group
+    set:
+      global:
+        pattern: production-pattern
+      clusterGroup:
+        name: edge-cluster
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: trusted-ca-bundle
+      - equal:
+          path: metadata.namespace
+          value: production-pattern-edge-cluster
+      - equal:
+          path: metadata.labels["config.openshift.io/inject-trusted-cabundle"]
+          value: "true"
+
+  - it: should handle complex naming scenarios
+    set:
+      global:
+        pattern: multi-word-pattern
+      clusterGroup:
+        name: production-hub-cluster
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ConfigMap
+      - equal:
+          path: metadata.namespace
+          value: multi-word-pattern-production-hub-cluster
+      - equal:
+          path: apiVersion
+          value: v1
+
+  - it: should always have the trusted CA bundle injection label
+    set:
+      global:
+        pattern: minimal
+      clusterGroup:
+        name: test
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.labels["config.openshift.io/inject-trusted-cabundle"]
+          value: "true"

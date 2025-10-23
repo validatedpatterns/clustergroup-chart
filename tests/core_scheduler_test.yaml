@@ -1,0 +1,79 @@
+suite: Test scheduler with various configurations
+templates:
+  - templates/core/scheduler.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should output nothing when enabled is plumbing
+    set:
+      enabled: plumbing
+      clusterGroup:
+        scheduler:
+          mastersSchedulable: true
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create scheduler when configured
+    set:
+      clusterGroup:
+        scheduler:
+          mastersSchedulable: true
+          defaultNodeSelector: type=user-node,region=east
+          profile: HighNodeUtilization
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Scheduler
+      - equal:
+          path: metadata.name
+          value: cluster
+      - equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-options"]
+          value: Prune=false,Delete=false
+      - equal:
+          path: spec.mastersSchedulable
+          value: true
+      - equal:
+          path: spec.defaultNodeSelector
+          value: type=user-node,region=east
+      - equal:
+          path: spec.profile
+          value: HighNodeUtilization
+
+  - it: should create scheduler with minimal configuration
+    set:
+      clusterGroup:
+        scheduler:
+          mastersSchedulable: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Scheduler
+      - equal:
+          path: spec.mastersSchedulable
+          value: false
+
+  - it: should create scheduler with policy configuration
+    set:
+      clusterGroup:
+        scheduler:
+          policy:
+            name: custom-policy
+          defaultNodeSelector: "node-role.kubernetes.io/worker="
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.policy.name
+          value: custom-policy
+      - equal:
+          path: spec.defaultNodeSelector
+          value: "node-role.kubernetes.io/worker="
