@@ -11,12 +11,7 @@ kind: Subscription
 metadata:
   name: {{ $subs.name }}
   namespace: {{ . }}
-  {{- if $subs.annotations }}
-  annotations:
-    {{- range $key, $value := $subs.annotations }} {{- /* We loop through the map to get key/value pairs */}}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}{{- /* if $subs.annotations */}}
+  {{- include "clustergroup.annotations" $subs.annotations | nindent 2 }}
 spec:
   name: {{ $subs.name }}
   source: {{ default "redhat-operators" $subs.source }}
@@ -42,12 +37,7 @@ apiVersion: olm.operatorframework.io/v1
 kind: ClusterExtension
 metadata:
   name: {{ $subs.name }}
-  {{- if $subs.annotations }}
-  annotations:
-    {{- range $key, $value := $subs.annotations }} {{- /* We loop through the map to get key/value pairs */}}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}{{- /* if $subs.annotations */}}
+  {{- include "clustergroup.annotations" $subs.annotations | nindent 2 }}
 spec:
   namespace: {{ default "openshift-operators" $subs.namespace }}
   {{- if $subs.serviceAccountName }}
@@ -72,12 +62,7 @@ kind: Subscription
 metadata:
   name: {{ $subs.name }}
   namespace: {{ default "openshift-operators" $subs.namespace }}
-  {{- if $subs.annotations }}
-  annotations:
-    {{- range $key, $value := $subs.annotations }} {{- /* We loop through the map to get key/value pairs */}}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}{{- /* if $subs.annotations */}}
+  {{- include "clustergroup.annotations" $subs.annotations | nindent 2 }}
 spec:
   name: {{ $subs.name }}
   source: {{ default "redhat-operators" $subs.source }}

@@ -178,12 +178,7 @@ metadata:
     {{ $key }}: {{ $value | default "" | quote }}
     {{- end }}
     {{- end }}
-  {{- if $v.annotations }}
-  annotations:
-    {{- range $key, $value := $v.annotations }} {{- /* We loop through the map to get key/value pairs */}}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}{{- /* if $v.annotations */}}
+  {{- include "clustergroup.annotations" $v.annotations | nindent 2 }}
   {{- end }}
 spec:
 ---
@@ -240,3 +235,16 @@ spec:
   {{- end }}{{- /* End range $k, $v = $ns */}}
 {{- end }}{{- /* End of if operatorGroupExcludes */}}
 {{- end }} {{- /* End define  "clustergroup.template.core.operatorgroup.map" */}}
+
+{{/*
+Renders annotations from a given context
+Usage: {{ include "clustergroup.annotations" .annotations }}
+*/}}
+{{- define "clustergroup.annotations" -}}
+{{- if . }}
+annotations:
+  {{- range $key, $value := . }}
+  {{ $key }}: {{ $value | default "" | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}

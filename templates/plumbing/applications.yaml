@@ -11,12 +11,7 @@ metadata:
   namespace: {{ $namespace }}
   labels:
     validatedpatterns.io/pattern: {{ $.Values.global.pattern }}
-    {{- if .annotations }}
-  annotations:
-    {{- range $key, $value := .annotations }}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-    {{- end }}{{- /* if .annotations */}}
+  {{- include "clustergroup.annotations" .annotations | nindent 2 }}
   finalizers:
   - resources-finalizer.argocd.argoproj.io/foreground
 spec:

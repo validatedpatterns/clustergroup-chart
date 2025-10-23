@@ -13,12 +13,7 @@ metadata:
     {{- end }}
     {{- end }}
 
-    {{- if $v.annotations }}
-  annotations:
-    {{- range $key, $value := $v.annotations }}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-    {{- end }}{{- /* if $v.annotations */}}
+  {{- include "clustergroup.annotations" $v.annotations | nindent 2 }}
   {{- end }}{{- /* range $k, $v := $node */}}
 ---
 {{- end -}}

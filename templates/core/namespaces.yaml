@@ -21,12 +21,7 @@ metadata:
     {{ $key }}: {{ $value | default "" | quote }}
     {{- end }}
     {{- end }}
-  {{- if $v.annotations }}
-  annotations:
-    {{- range $key, $value := $v.annotations }} {{- /* We loop through the map to get key/value pairs */}}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}{{- /* if $v.annotations */}}
+  {{- include "clustergroup.annotations" $v.annotations | nindent 2 }}
   {{- end }}{{- /* range $k, $v := $ns */}}
 
   {{- else if kindIs "string" $ns }}
