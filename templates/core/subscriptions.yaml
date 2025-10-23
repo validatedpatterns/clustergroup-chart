@@ -99,7 +99,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: {{ $subs.name }}-sequencejob
-          image: {{ coalesce $subs.sequenceJob.image "quay.io/hybridcloudpatterns/imperative-container:v1" }}
+          image: {{ coalesce $subs.sequenceJob.image "quay.io/validatedpatterns/imperative-container:v1" }}
           {{- if $subs.sequenceJob.command }}
           command: {{ $subs.sequenceJob.command | toJson }}
           {{- else }}

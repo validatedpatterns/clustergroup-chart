@@ -136,7 +136,7 @@ clusterGroup:
 
   imperative:
     jobs: []
-    image: quay.io/hybridcloudpatterns/imperative-container:v1
+    image: quay.io/validatedpatterns/imperative-container:v1
     namespace: "imperative"
     # configmap name in the namespace that will contain all helm values
     valuesConfigMap: "helm-values-configmap"
@@ -232,7 +232,7 @@ clusterGroup:
 #            restartPolicy: OnFailure
 #            containers:
 #              - name: wait-for-storage-class
-#                image: quay.io/hybridcloudpatterns/imperative-container:v1
+#                image: quay.io/validatedpatterns/imperative-container:v1
 #                command:
 #                  - /bin/bash
 #                  - -c

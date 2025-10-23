@@ -19,7 +19,7 @@ tests:
           schedule: "0 2 * * *"
           activeDeadlineSeconds: 3600
           serviceAccountName: imperative-sa
-          image: quay.io/hybridcloudpatterns/imperative-container:v1
+          image: quay.io/validatedpatterns/imperative-container:v1
           imagePullPolicy: Always
           jobs:
             - name: deploy-app
@@ -64,7 +64,7 @@ tests:
           schedule: "0 3 * * *"
           activeDeadlineSeconds: 1800
           serviceAccountName: imperative-sa
-          image: quay.io/hybridcloudpatterns/imperative-container:v1
+          image: quay.io/validatedpatterns/imperative-container:v1
           imagePullPolicy: IfNotPresent
           jobs:
             - name: job-1
