@@ -1,0 +1,68 @@
+suite: Test nodes with various configurations
+templates:
+  - templates/core/nodes.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should output nothing when enabled is plumbing
+    set:
+      enabled: plumbing
+      global:
+        pattern: test
+      clusterGroup:
+        name: hub
+        nodes:
+          - worker-1:
+              labels:
+                node-role.kubernetes.io/worker: ""
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create nodes when configured
+    set:
+      global:
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        nodes:
+          - worker-1:
+              labels:
+                node-role.kubernetes.io/worker: ""
+                zone: us-east-1a
+              annotations:
+                description: "Worker node in zone A"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Node
+      - equal:
+          path: metadata.name
+          value: worker-1
+      - equal:
+          path: metadata.labels["argocd.argoproj.io/managed-by"]
+          value: test-pattern-hub
+
+  - it: should handle nodes with minimal configuration
+    set:
+      global:
+        pattern: minimal
+      clusterGroup:
+        name: cluster
+        nodes:
+          - simple-node: {}
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: simple-node
+      - equal:
+          path: metadata.labels["argocd.argoproj.io/managed-by"]
+          value: minimal-cluster

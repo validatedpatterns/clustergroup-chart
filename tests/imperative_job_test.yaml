@@ -1,0 +1,145 @@
+suite: Test imperative job with various configurations
+templates:
+  - templates/imperative/job.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create cronjob when imperative jobs are defined
+    set:
+      clusterGroup:
+        imperative:
+          cronJobName: pattern-cronjob
+          jobName: pattern-job
+          namespace: imperative
+          schedule: "0 2 * * *"
+          activeDeadlineSeconds: 3600
+          serviceAccountName: imperative-sa
+          image: quay.io/hybridcloudpatterns/imperative-container:v1
+          imagePullPolicy: Always
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+              verbosity: "-v"
+              tags: "deploy,config"
+              timeout: "900"
+              extravars:
+                - "environment=production"
+                - "region=us-east-1"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: CronJob
+      - equal:
+          path: metadata.name
+          value: pattern-cronjob
+      - equal:
+          path: metadata.namespace
+          value: imperative
+      - equal:
+          path: spec.schedule
+          value: "0 2 * * *"
+      - equal:
+          path: spec.concurrencyPolicy
+          value: Forbid
+      - equal:
+          path: spec.jobTemplate.spec.activeDeadlineSeconds
+          value: 3600
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.serviceAccountName
+          value: imperative-sa
+
+  - it: should create multiple init containers for multiple jobs
+    set:
+      clusterGroup:
+        imperative:
+          cronJobName: multi-job-cronjob
+          jobName: multi-job
+          namespace: imperative
+          schedule: "0 3 * * *"
+          activeDeadlineSeconds: 1800
+          serviceAccountName: imperative-sa
+          image: quay.io/hybridcloudpatterns/imperative-container:v1
+          imagePullPolicy: IfNotPresent
+          jobs:
+            - name: job-1
+              playbook: playbook-1.yml
+              timeout: "600"
+            - name: job-2
+              playbook: playbook-2.yml
+              verbosity: "-vv"
+              tags: "setup"
+              extravars:
+                - "debug=true"
+            - name: job-3
+              playbook: disabled-playbook.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: CronJob
+      - equal:
+          path: metadata.name
+          value: multi-job-cronjob
+
+  - it: should use default timeout when not specified
+    set:
+      clusterGroup:
+        imperative:
+          cronJobName: default-timeout-job
+          jobName: timeout-job
+          namespace: imperative
+          schedule: "0 4 * * *"
+          activeDeadlineSeconds: 1200
+          serviceAccountName: imperative-sa
+          jobs:
+            - name: default-timeout-job
+              playbook: default-timeout.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should handle jobs with custom image
+    set:
+      clusterGroup:
+        imperative:
+          cronJobName: custom-image-job
+          jobName: custom-job
+          namespace: imperative
+          schedule: "0 5 * * *"
+          activeDeadlineSeconds: 900
+          serviceAccountName: imperative-sa
+          image: default-image:latest
+          jobs:
+            - name: custom-image-job
+              image: custom-image:v2
+              playbook: custom.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should skip disabled jobs
+    set:
+      clusterGroup:
+        imperative:
+          cronJobName: mixed-jobs
+          jobName: mixed
+          namespace: imperative
+          schedule: "0 6 * * *"
+          activeDeadlineSeconds: 600
+          serviceAccountName: imperative-sa
+          jobs:
+            - name: enabled-job
+              playbook: enabled.yml
+            - name: disabled-job
+              playbook: disabled.yml
+            - name: another-enabled-job
+              playbook: enabled2.yml
+    asserts:
+      - hasDocuments:
+          count: 1

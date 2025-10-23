@@ -1,0 +1,58 @@
+suite: Test imperative components
+release:
+  name: release-test
+tests:
+  - it: should create basic imperative namespace
+    templates:
+      - templates/imperative/namespace.yaml
+    set:
+      clusterGroup:
+        imperative:
+          namespace: imperative
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Namespace
+      - equal:
+          path: metadata.name
+          value: imperative
+
+  - it: should create service account when enabled
+    templates:
+      - templates/imperative/serviceaccount.yaml
+    set:
+      clusterGroup:
+        imperative:
+          serviceAccountCreate: true
+          adminServiceAccountCreate: false
+          serviceAccountName: imperative-sa
+          namespace: imperative
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ServiceAccount
+      - equal:
+          path: metadata.name
+          value: imperative-sa
+
+  - it: should create role with default permissions
+    templates:
+      - templates/imperative/role.yaml
+    set:
+      clusterGroup:
+        imperative:
+          roleName: imperative-role
+          namespace: imperative
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Role
+      - equal:
+          path: metadata.name
+          value: imperative-role
+      - equal:
+          path: rules[0].apiGroups[0]
+          value: "*"
