@@ -50,7 +50,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.imperative.clusterRoleName | string | `"imperative-cluster-role"` |  |
 | clusterGroup.imperative.clusterRoleYaml | string | `""` |  |
 | clusterGroup.imperative.cronJobName | string | `"imperative-cronjob"` |  |
-| clusterGroup.imperative.image | string | `"quay.io/hybridcloudpatterns/imperative-container:v1"` |  |
+| clusterGroup.imperative.image | string | `"quay.io/validatedpatterns/imperative-container:v1"` |  |
 | clusterGroup.imperative.imagePullPolicy | string | `"Always"` |  |
 | clusterGroup.imperative.insecureUnsealVaultInsideClusterSchedule | string | `"*/5 * * * *"` |  |
 | clusterGroup.imperative.jobName | string | `"imperative-job"` |  |

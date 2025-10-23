@@ -27,7 +27,7 @@ tests:
                   restartPolicy: OnFailure
                   containers:
                     - name: wait
-                      image: quay.io/hybridcloudpatterns/imperative-container:v1
+                      image: quay.io/validatedpatterns/imperative-container:v1
                       command: ["/bin/bash"]
     asserts:
       - hasDocuments:
