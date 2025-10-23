@@ -26,12 +26,7 @@ metadata:
     {{ $key }}: {{ $value | default "" | quote }}
     {{- end }}
   {{- end }}
-  {{- if (hasKey $v "annotations") }}
-  annotations:
-    {{- range $key, $value := $v.annotations }}
-    {{ $key }}: {{ $value | default "" | quote }}
-    {{- end }}
-  {{- end }}
+  {{- include "clustergroup.annotations" $v.annotations | nindent 2 }}
   {{- if (hasKey $v "targetNamespaces") }}
     {{- if $v.targetNamespaces }}
 spec:
