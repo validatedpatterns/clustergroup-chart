@@ -5,8 +5,10 @@
 
 {{- $hashicorp_vault_found := false }}
 {{- range .Values.clusterGroup.applications }}
-  {{- if eq .chart "hashicorp-vault" }}
-    {{- $hashicorp_vault_found = true }}
+  {{- if . }} {{- /* Skip null applications */}}
+    {{- if eq .chart "hashicorp-vault" }}
+      {{- $hashicorp_vault_found = true }}
+    {{- end }}
   {{- end }}
 {{- end }}
 

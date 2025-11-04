@@ -1,0 +1,127 @@
+suite: Test unsealjob null application handling
+templates:
+  - templates/imperative/unsealjob.yaml
+release:
+  name: release-test
+tests:
+  - it: should not output an unsealjob by default
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render the unsealVault job when hashicorp-vault exists and no null applications
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  - it: should render the unsealVault job when hashicorp-vault exists with null applications mixed in
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          golang-external-secrets: null
+          another-null-app: null
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  - it: should not render the unsealVault job when hashicorp-vault is set to null
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          vault: null
+          golang-external-secrets: null
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should handle all applications being null and not render unsealjob
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          golang-external-secrets: null
+          vault: null
+          another-app: null
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should handle empty applications object
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: false
+        applications: {}
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render unsealjob when isHubCluster is true regardless of null applications
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: true
+        applications:
+          golang-external-secrets: null
+          vault: null
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
