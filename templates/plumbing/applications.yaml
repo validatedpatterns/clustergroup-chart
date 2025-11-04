@@ -1,3 +1,4 @@
+{{- if ($.Values.global.deletePattern | default "0" | int | ne 1) }} {{- /* When a pattern is deleting applications should be removed */}}
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
 {{- range .Values.clusterGroup.applications }}
 {{- if . }} {{- /* Skip null applications */}}
@@ -40,7 +41,7 @@ spec:
       helm:
         ignoreMissingValueFiles: true
         values: |
-          extraParametersNested: 
+          extraParametersNested:
           {{- range $k, $v := $.Values.extraParametersNested }}
             {{ $k }}: {{ printf "%s" $v | quote }}
           {{- end }}
@@ -192,3 +193,4 @@ spec:
 {{- end }}{{- /* if .disabled */}}
 {{- end }}{{- /* if . (skip null applications) */}}
 {{- end }}{{- /* range .Values.clusterGroup.applications */}}
+{{- end }}{{- /* if ($.Values.global.deletePattern | default "0" | int | ne 1) */}}
