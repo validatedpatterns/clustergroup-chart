@@ -1,5 +1,6 @@
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
 {{- range .Values.clusterGroup.applications }}
+{{- if . }} {{- /* Skip null applications */}}
 {{- $projectName := coalesce .argoProject .project "default" -}} {{- /* Read argoProject if set, otherwise .project and otherwise set it to "default" */}}
 {{- if .disabled }} {{- /* This allows us to null out an Application entry by specifying disabled: true in an override file */}}
 {{- else }}
@@ -189,4 +190,5 @@ spec:
       limit: {{ default 20 $.Values.global.options.applicationRetryLimit }}
   {{- end }}{{- /* .syncPolicy */}}
 {{- end }}{{- /* if .disabled */}}
+{{- end }}{{- /* if . (skip null applications) */}}
 {{- end }}{{- /* range .Values.clusterGroup.applications */}}

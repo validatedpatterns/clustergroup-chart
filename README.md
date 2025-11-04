@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.34](https://img.shields.io/badge/Version-0.9.34-informational?style=flat-square)
+![Version: 0.9.35](https://img.shields.io/badge/Version-0.9.35-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 

@@ -1,0 +1,168 @@
+suite: Test null application handling
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render applications when all are valid
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isKind:
+          of: Application
+
+  - it: should skip null applications and render only valid ones
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          golang-external-secrets: null
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isKind:
+          of: Application
+
+  - it: should handle all applications being null
+    set:
+      clusterGroup:
+        applications:
+          golang-external-secrets: null
+          another-app: null
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should handle mixed null and disabled applications
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          disabled-app:
+            name: disabled-app
+            namespace: test
+            chart: test-chart
+            disabled: true
+          golang-external-secrets: null
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isKind:
+          of: Application
+
+  - it: should handle only valid applications when mixed with null values
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          null-app: null
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isKind:
+          of: Application
+
+  - it: should handle the original bug scenario with golang-external-secrets set to null
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          golang-external-secrets: null
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
