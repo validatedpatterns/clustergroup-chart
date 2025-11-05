@@ -166,6 +166,8 @@ status: {}
 {{- $clusterGroupName := index . 2 }}
 
 {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+{{- if or (eq $v nil) (not $v.disabled) }} {{- /* Process if $v is nil or disabled is false */}}
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -179,9 +181,12 @@ metadata:
     {{- end }}
     {{- end }}
   {{- include "clustergroup.annotations" $v.annotations | nindent 2 }}
+  {{- else }}
+  labels:
+    argocd.argoproj.io/managed-by: {{ $patternName }}-{{ $clusterGroupName }}
   {{- end }}
 spec:
----
+{{- end }}{{- /* if not disabled */}}
 {{- end }}{{- /* range $k, $v := $ns */}}
 {{- end }}
 
