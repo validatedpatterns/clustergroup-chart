@@ -83,3 +83,56 @@ tests:
       - equal:
           path: spec.targetNamespaces[2]
           value: target-ns-3
+
+  - it: should skip operator groups for disabled namespaces
+    set:
+      clusterGroup:
+        namespaces:
+          - enabled-string-namespace
+          - enabled-map-namespace:
+              disabled: false
+              labels:
+                test: "enabled"
+          - disabled-map-namespace:
+              disabled: true
+              labels:
+                test: "disabled"
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: OperatorGroup
+      - equal:
+          path: metadata.name
+          value: enabled-string-namespace-operator-group
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: enabled-map-namespace-operator-group
+        documentIndex: 1
+
+  - it: should handle mixed disabled and operatorGroup false configurations
+    set:
+      clusterGroup:
+        namespaces:
+          - enabled-namespace
+          - disabled-namespace:
+              disabled: true
+          - no-operator-group-namespace:
+              operatorGroup: false
+              labels:
+                test: "no-og"
+          - enabled-with-og-namespace:
+              disabled: false
+              operatorGroup: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - equal:
+          path: metadata.name
+          value: enabled-namespace-operator-group
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: enabled-with-og-namespace-operator-group
+        documentIndex: 1

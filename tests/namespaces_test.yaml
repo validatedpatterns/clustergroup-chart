@@ -57,3 +57,102 @@ tests:
         equal:
           path: metadata.annotations["openshift.io/cluster-monitoring"]
           value: "true"
+
+  - it: should skip disabled namespaces in list format
+    set:
+      global:
+        pattern: test
+      clusterGroup:
+        name: hub
+        namespaces:
+          - foo
+          - bar:
+              disabled: true
+          - baz
+    asserts:
+      - isKind:
+          of: Namespace
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: foo
+        equal:
+          path: metadata.labels["argocd.argoproj.io/managed-by"]
+          value: test-hub
+      - documentSelector:
+          path: metadata.name
+          value: baz
+        equal:
+          path: metadata.labels["argocd.argoproj.io/managed-by"]
+          value: test-hub
+
+  - it: should skip disabled namespaces in map format
+    set:
+      global:
+        pattern: test
+      clusterGroup:
+        name: hub
+        namespaces:
+          namespace1:
+            labels:
+              test: "value"
+          disabled-namespace:
+            disabled: true
+            labels:
+              should: "not-appear"
+          namespace3:
+            annotations:
+              test: "annotation"
+    asserts:
+      - isKind:
+          of: Namespace
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: namespace1
+        equal:
+          path: metadata.labels.test
+          value: "value"
+      - documentSelector:
+          path: metadata.name
+          value: namespace3
+        equal:
+          path: metadata.annotations.test
+          value: "annotation"
+
+  - it: should handle mixed disabled and enabled namespaces in map format
+    set:
+      global:
+        pattern: test
+      clusterGroup:
+        name: hub
+        namespaces:
+          enabled-ns:
+            labels:
+              env: "production"
+          disabled-ns1:
+            disabled: true
+          disabled-ns2:
+            disabled: true
+            labels:
+              env: "staging"
+          another-enabled-ns:
+    asserts:
+      - isKind:
+          of: Namespace
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: enabled-ns
+        equal:
+          path: metadata.labels.env
+          value: "production"
+      - documentSelector:
+          path: metadata.name
+          value: another-enabled-ns
+        equal:
+          path: metadata.labels["argocd.argoproj.io/managed-by"]
+          value: test-hub

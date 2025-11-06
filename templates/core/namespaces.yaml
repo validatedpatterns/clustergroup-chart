@@ -8,6 +8,16 @@
 {{- template "clustergroup.template.core.namespaces.map" (list .Values.clusterGroup.namespaces $.Values.global.pattern $.Values.clusterGroup.name) }}
 {{- else }}
 {{- range $ns := .Values.clusterGroup.namespaces }}
+{{- if $ns }} {{- /* Skip null namespaces */}}
+{{- $disabled := false }}
+{{- if kindIs "map" $ns }}
+  {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+    {{- $disabled = $v.disabled | default false }}
+  {{- end }}
+{{- end }}
+{{- if $disabled }} {{- /* This allows us to null out a Namespace entry by specifying disabled: true in an override file */}}
+{{- else }}
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -30,6 +40,7 @@ metadata:
   name: {{ $ns }}
   {{- end }} {{- /* if kindIs "string" $ns */}}
 spec:
----
+{{- end }}{{- /* if $disabled */}}
+{{- end }}{{- /* if $ns (skip null namespaces) */}}
 {{- end }}
 {{- end }}

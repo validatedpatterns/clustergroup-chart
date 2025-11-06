@@ -166,6 +166,8 @@ status: {}
 {{- $clusterGroupName := index . 2 }}
 
 {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+{{- if or (eq $v nil) (not $v.disabled) }} {{- /* Process if $v is nil or disabled is false */}}
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -179,9 +181,12 @@ metadata:
     {{- end }}
     {{- end }}
   {{- include "clustergroup.annotations" $v.annotations | nindent 2 }}
+  {{- else }}
+  labels:
+    argocd.argoproj.io/managed-by: {{ $patternName }}-{{ $clusterGroupName }}
   {{- end }}
 spec:
----
+{{- end }}{{- /* if not disabled */}}
 {{- end }}{{- /* range $k, $v := $ns */}}
 {{- end }}
 
@@ -197,6 +202,7 @@ spec:
 {{- $operatorgroupExcludes := index . 1 }}
 {{- if or (empty $operatorgroupExcludes) (not (has . $operatorgroupExcludes)) }}
   {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+  {{- if or (eq $v nil) (not $v.disabled) }} {{- /* Process if $v is nil or disabled is false */}}
   {{- if $v }}
     {{- if or $v.operatorGroup (not (hasKey $v "operatorGroup")) }}{{- /* Checks if the user sets operatorGroup: false */}}
 ---
@@ -232,6 +238,7 @@ spec:
   targetNamespaces:
   - {{ $k }}
   {{- end }}{{- /* end if $v */}}
+  {{- end }}{{- /* if not disabled */}}
   {{- end }}{{- /* End range $k, $v = $ns */}}
 {{- end }}{{- /* End of if operatorGroupExcludes */}}
 {{- end }} {{- /* End define  "clustergroup.template.core.operatorgroup.map" */}}
