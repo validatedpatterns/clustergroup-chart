@@ -8,12 +8,21 @@
 {{- template "clustergroup.template.core.operatorgroup.map" (list .Values.clusterGroup.namespaces .Values.clusterGroup.operatorgroupExcludes) }}
 {{- else }}
 {{- range $ns := .Values.clusterGroup.namespaces }}
+{{- if $ns }} {{- /* Skip null namespaces */}}
+{{- $disabled := false }}
+{{- if kindIs "map" $ns }}
+  {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
+    {{- $disabled = $v.disabled | default false }}
+  {{- end }}
+{{- end }}
+{{- if $disabled }} {{- /* This allows us to null out a Namespace entry by specifying disabled: true in an override file */}}
+{{- else }}
 
 {{- if or (empty $.Values.clusterGroup.operatorgroupExcludes) (not (has . $.Values.clusterGroup.operatorgroupExcludes)) }}
 
   {{- if kindIs "map" $ns }}
   {{- range $k, $v := $ns }}{{- /* We loop here even though the map has always just one key */}}
-  {{- if $v.operatorGroup }}{{- /* Checks if the user sets operatorGroup: false */}}
+  {{- if or $v.operatorGroup (not (hasKey $v "operatorGroup")) }}{{- /* Checks if the user sets operatorGroup: false */}}
 ---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
@@ -55,5 +64,7 @@ spec:
   {{- end }} {{- /* if kindIs "string" $ns */}}
 ---
 {{- end }} {{- /* if or (empty $.Values.clusterGroup.operatorgroupExcludes) (not (has . $.Values.clusterGroup.operatorgroupExcludes)) */}}
+{{- end }}{{- /* if $disabled */}}
+{{- end }}{{- /* if $ns (skip null namespaces) */}}
 {{- end }} {{- /* range $ns := .Values.clusterGroup.namespaces */}}
 {{- end }} {{- /* if kindIs "map" $ns */}}
