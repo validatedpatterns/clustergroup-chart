@@ -1,0 +1,188 @@
+suite: Test deletePattern behavior
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should render applications when deletePattern is not set (default behavior)
+    set:
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isKind:
+          of: Application
+
+  - it: should render applications when deletePattern is 0
+    set:
+      global:
+        deletePattern: 0
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isKind:
+          of: Application
+
+  - it: should NOT render applications when deletePattern is 1
+    set:
+      global:
+        deletePattern: 1
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should NOT render applications when deletePattern is "1" (string)
+    set:
+      global:
+        deletePattern: "1"
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render applications when deletePattern is "0" (string)
+    set:
+      global:
+        deletePattern: "0"
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 1
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+
+  - it: should work correctly with deletePattern when some applications are null
+    set:
+      global:
+        deletePattern: 0
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          golang-external-secrets: null
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: acm
+        isKind:
+          of: Application
+      - documentSelector:
+          path: metadata.name
+          value: vault
+        isKind:
+          of: Application
+
+  - it: should not render any applications even with null apps when deletePattern is 1
+    set:
+      global:
+        deletePattern: 1
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+          golang-external-secrets: null
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 0
