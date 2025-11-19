@@ -1,0 +1,324 @@
+suite: Test sharedValueFiles functionality in ArgoCD applications
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should output nothing by default when no applications are defined
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should render application with no sharedValueFiles when empty array is provided
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        sharedValueFiles: []
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - equal:
+          path: spec.source.helm.valueFiles
+          value:
+            - "/values-global.yaml"
+            - "/values-hub.yaml"
+
+  - it: should render application with single sharedValueFiles entry
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        sharedValueFiles:
+          - "/shared/common-values.yaml"
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/common-values.yaml"
+
+  - it: should render application with multiple sharedValueFiles entries
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        sharedValueFiles:
+          - "/shared/common-values.yaml"
+          - "/shared/environment-values.yaml"
+          - "/shared/cluster-specific-values.yaml"
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/common-values.yaml"
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/environment-values.yaml"
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/cluster-specific-values.yaml"
+
+  - it: should render application with templated sharedValueFiles using global values
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+        clusterPlatform: openshift
+        clusterVersion: "4.14"
+      clusterGroup:
+        name: hub
+        sharedValueFiles:
+          - "/shared/values-{{ .Values.global.clusterPlatform }}.yaml"
+          - "/shared/values-{{ .Values.global.clusterPlatform }}-{{ .Values.global.clusterVersion }}.yaml"
+          - "/shared/values-{{ .Values.clusterGroup.name }}.yaml"
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/values-openshift.yaml"
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/values-openshift-4.14.yaml"
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/values-hub.yaml"
+
+  - it: should render multisource application with sharedValueFiles
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        sharedValueFiles:
+          - "/shared/common-values.yaml"
+          - "/shared/environment-values.yaml"
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            chart: test-chart
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - contains:
+          path: spec.sources[1].helm.valueFiles
+          content: "$patternref/shared/common-values.yaml"
+      - contains:
+          path: spec.sources[1].helm.valueFiles
+          content: "$patternref/shared/environment-values.yaml"
+      - contains:
+          path: spec.sources[1].helm.valueFiles
+          content: "$patternref/values-global.yaml"
+      - contains:
+          path: spec.sources[1].helm.valueFiles
+          content: "$patternref/values-hub.yaml"
+
+  - it: should render application with both sharedValueFiles and extraValueFiles
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        sharedValueFiles:
+          - "/shared/common-values.yaml"
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+            extraValueFiles:
+              - "/extra/app-specific-values.yaml"
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/common-values.yaml"
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/extra/app-specific-values.yaml"
+
+  - it: should apply sharedValueFiles to all applications in the cluster group
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        sharedValueFiles:
+          - "/shared/cluster-wide-values.yaml"
+        applications:
+          - name: app-one
+            namespace: namespace-one
+            path: charts/app-one
+          - name: app-two
+            namespace: namespace-two
+            path: charts/app-two
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: app-one
+        contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/cluster-wide-values.yaml"
+      - documentSelector:
+          path: metadata.name
+          value: app-two
+        contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/shared/cluster-wide-values.yaml"
+
+  - it: should not add prefix when value file already starts with $patternref/
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        sharedValueFiles:
+          - "$patternref/already-prefixed-values.yaml"
+          - "/not-prefixed-values.yaml"
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/already-prefixed-values.yaml"
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/not-prefixed-values.yaml"
+
+  - it: should handle extraValueFiles prefixing correctly
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+            extraValueFiles:
+              - "$patternref/already-prefixed-extra.yaml"
+              - "/not-prefixed-extra.yaml"
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/already-prefixed-extra.yaml"
+      - contains:
+          path: spec.source.helm.valueFiles
+          content: "$patternref/not-prefixed-extra.yaml"
+
+  - it: should not include sharedValueFiles when not specified at clusterGroup level
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/test-pattern
+        targetRevision: main
+        pattern: test-pattern
+      clusterGroup:
+        name: hub
+        # No sharedValueFiles specified at clusterGroup level
+        applications:
+          - name: test-app
+            namespace: test-namespace
+            path: charts/test-app
+    asserts:
+      - isKind:
+          of: Application
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: test-app
+      - equal:
+          path: spec.source.helm.valueFiles
+          value:
+            - "/values-global.yaml"
+            - "/values-hub.yaml"
