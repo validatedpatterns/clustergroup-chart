@@ -12,7 +12,7 @@
   {{- end }}
 {{- end }}
 
-{{- if or $.Values.clusterGroup.isHubCluster $hashicorp_vault_found }}
+{{- if or (eq (include "clustergroup.ishubcluster" .) "true") $hashicorp_vault_found }}
 ---
 apiVersion: batch/v1
 kind: CronJob

@@ -281,3 +281,26 @@ annotations:
   {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Determines if the current cluster is a hub cluster.
+First checks if clusterGroup.isHubCluster is explicitly set (and not null) and uses that value.
+If not set or null, falls back to comparing global.localClusterDomain and global.hubClusterDomain.
+If domains are equal or localClusterDomain is not set (defaults to hubClusterDomain), this is a hub cluster.
+Usage: {{ include "clustergroup.ishubcluster" . }}
+Returns: "true" or "false" as a string
+*/}}
+{{- define "clustergroup.ishubcluster" -}}
+{{- if and (hasKey .Values.clusterGroup "isHubCluster") (not (kindIs "invalid" .Values.clusterGroup.isHubCluster)) -}}
+  {{- .Values.clusterGroup.isHubCluster | toString -}}
+{{- else if $.Values.global.hubClusterDomain -}}
+  {{- $localDomain := coalesce $.Values.global.localClusterDomain $.Values.global.hubClusterDomain -}}
+  {{- if eq $localDomain $.Values.global.hubClusterDomain -}}
+true
+  {{- else -}}
+false
+  {{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end }}

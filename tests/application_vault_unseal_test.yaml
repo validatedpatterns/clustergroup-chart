@@ -7,7 +7,7 @@ tests:
   - it: should not output an unsealjob by default
     asserts:
       - hasDocuments:
-          count: 1
+          count: 0
 
   - it: should render the unsealVault job when the application dict has hashicorp-vault but when isHubCluster is false
     set:

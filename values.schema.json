@@ -298,8 +298,9 @@
           "type": "string"
         },
         "isHubCluster": {
-          "type": "boolean",
-          "description": "If set to true the values is used to identify whether this is the hub cluster or an edge/spoke cluster configuration."
+          "type": ["boolean", "null"],
+          "deprecated": true,
+          "description": "DEPRECATED: If set to true the values is used to identify whether this is the hub cluster or an edge/spoke cluster configuration. Use global.localClusterDomain and global.hubClusterDomain instead."
         },
         "sharedValueFiles": {
             "type": "array",
@@ -458,7 +459,6 @@
       },
       "required": [
         "applications",
-        "isHubCluster",
         "name",
         "namespaces"
       ],
