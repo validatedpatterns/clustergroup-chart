@@ -47,12 +47,8 @@ spec:
           {{- end }}
         valueFiles:
         {{- include "clustergroup.app.globalvalues.prefixedvaluefiles" $ | nindent 8 }}
-        {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}
-        - {{ tpl $valueFile $ | quote }}
-        {{- end }}
-        {{- range $valueFile := .extraValueFiles }}
-        - {{ tpl $valueFile $ | quote }}
-        {{- end }}
+        {{- include "clustergroup.sharedvaluefiles" (list . $) | nindent 8 }}
+        {{- include "clustergroup.app.extravaluefiles" (list . $) | nindent 8 }}
         parameters:
           {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 10 }}
           {{- range .extraHubClusterDomainFields }}
@@ -119,12 +115,8 @@ spec:
           {{- end }}
       valueFiles:
       {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 6 }}
-      {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}
-      - {{ tpl $valueFile $ | quote }}
-      {{- end }}
-      {{- range $valueFile := .extraValueFiles }}
-      - {{ tpl $valueFile $ | quote }}
-      {{- end }}
+      {{- include "clustergroup.sharedvaluefiles" (list . $) | nindent 6 }}
+      {{- include "clustergroup.app.extravaluefiles" (list . $) | nindent 6 }}
       parameters:
         {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
         {{- range .extraHubClusterDomainFields }}

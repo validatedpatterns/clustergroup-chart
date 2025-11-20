@@ -58,6 +58,32 @@ Default always defined valueFiles to be included in Applications
 {{- end }} {{/* if $.Values.global.extraValueFiles */}}
 {{- end }} {{/* clustergroup.app.globalvalues.valuefiles */}}
 
+{{- define "clustergroup.sharedvaluefiles" -}}
+{{- $app := index . 0 }}
+{{- $root := index . 1 }}
+{{- range $valueFile := $root.Values.clusterGroup.sharedValueFiles }}
+{{- $resolvedFile := tpl $valueFile $root }}
+{{- if hasPrefix "$patternref/" $resolvedFile }}
+- {{ $resolvedFile | quote }}
+{{- else }}
+- {{ printf "$patternref%s" $resolvedFile | quote }}
+{{- end }}
+{{- end }}
+{{- end }} {{- /* clustergroup.sharedvaluefiles */}}
+
+{{- define "clustergroup.app.extravaluefiles" -}}
+{{- $app := index . 0 }}
+{{- $root := index . 1 }}
+{{- range $valueFile := $app.extraValueFiles }}
+{{- $resolvedFile := tpl $valueFile $root }}
+{{- if hasPrefix "$patternref/" $resolvedFile }}
+- {{ $resolvedFile | quote }}
+{{- else }}
+- {{ printf "$patternref%s" $resolvedFile | quote }}
+{{- end }}
+{{- end }}
+{{- end }} {{- /* clustergroup.app.extravaluefiles */}}
+
 {{/*
 Default always defined valueFiles to be included in Applications but with a prefix called $patternref
 */}}
