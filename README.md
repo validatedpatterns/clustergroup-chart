@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.37](https://img.shields.io/badge/Version-0.9.37-informational?style=flat-square)
+![Version: 0.9.38](https://img.shields.io/badge/Version-0.9.38-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -8,6 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.38: Ensure sharedValueFiles and extraValueFiles are always prefixed with $patternref
 * v0.9.37: Use global.patternDelete value set by patterns operator when patterns are deleted
 * v0.9.32: Add labels and annotations to operatorgroups when included in namespaces
 * v0.9.27: Introduce support for OLMv1 Subscriptions
