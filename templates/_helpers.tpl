@@ -32,14 +32,6 @@ Default always defined top-level variables for helm charts
   value: {{ $.Values.global.privateRepo | quote }}
 - name: global.experimentalCapabilities
   value: {{ $.Values.global.experimentalCapabilities | default "" }}
-{{- if hasKey $.Values.global "clusterGroupGitRepoUrl" }}
-- name: global.clusterGroupGitRepoUrl
-  value: {{ $.Values.global.clusterGroupGitRepoUrl }}
-{{- end }}
-{{- if hasKey $.Values.global "clusterGroupChartGitRevision" }}
-- name: global.clusterGroupChartGitRevision
-  value: {{ $.Values.global.clusterGroupChartGitRevision }}
-{{- end }}
 {{- end }} {{/* clustergroup.globalvaluesparameters */}}
 
 

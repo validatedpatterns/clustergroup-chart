@@ -188,16 +188,6 @@
           "readOnly": true,
           "description": "The namespace in which the ArgoCD instance is running. Automatically set to either 'openshift-operators' or '$ARGOCD_APP_NAMESPACE'"
         },
-        "clusterGroupGitRepoUrl": {
-          "type": "string",
-          "readOnly": true,
-          "description": "Only useful for developers of the clustergroup chart. Defines the the git repo to clone the clustergroup chart from"
-        },
-        "clusterGroupChartGitRevision": {
-          "type": "string",
-          "readOnly": true,
-          "description": "Only useful for developers of the clustergroup chart. Defines the the git revision/branch of the git clustergroup chart"
-        },
         "git": {
           "$ref": "#/definitions/GlobalGit"
         },
