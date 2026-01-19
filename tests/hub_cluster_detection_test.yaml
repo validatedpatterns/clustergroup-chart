@@ -1,0 +1,201 @@
+suite: Test Hub Cluster Detection Logic
+templates:
+  - templates/imperative/unsealjob.yaml
+release:
+  name: release-test
+tests:
+  # Test 1: isHubCluster takes precedence over domain logic (explicit true)
+  - it: should use isHubCluster true even when domains do not match
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        hubClusterDomain: "apps.hub.example.com"
+        localClusterDomain: "apps.spoke.example.com"
+      clusterGroup:
+        isHubCluster: true  # This takes precedence over domain logic
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  # Test 2: isHubCluster takes precedence over domain logic (explicit false)
+  - it: should use isHubCluster false even when domains match
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        hubClusterDomain: "apps.hub.example.com"
+        localClusterDomain: "apps.hub.example.com"
+        secretStore:
+          backend: "vault"
+      clusterGroup:
+        isHubCluster: false  # This takes precedence over domain logic
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # Test 3: Domain logic fallback - hub cluster when domains match (isHubCluster not set)
+  - it: should detect hub cluster via domain logic when isHubCluster is not set and domains match
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        hubClusterDomain: "apps.hub.example.com"
+        localClusterDomain: "apps.hub.example.com"
+      clusterGroup:
+        isHubCluster: null  # Explicitly null to trigger domain logic fallback
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  # Test 4: Domain logic fallback - managed cluster when domains differ (isHubCluster not set)
+  - it: should detect managed cluster via domain logic when isHubCluster is not set and domains differ
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        hubClusterDomain: "apps.hub.example.com"
+        localClusterDomain: "apps.spoke.example.com"
+        secretStore:
+          backend: "vault"
+      clusterGroup:
+        isHubCluster: null  # Explicitly null to trigger domain logic fallback
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # Test 5: Domain logic fallback - hub cluster when localClusterDomain is unset
+  - it: should detect hub cluster when isHubCluster not set and localClusterDomain defaults to hubClusterDomain
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        hubClusterDomain: "apps.hub.example.com"
+        # localClusterDomain is intentionally not set - defaults to hubClusterDomain
+      clusterGroup:
+        isHubCluster: null  # Explicitly null to trigger domain logic fallback
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  # Test 6: Fallback to false when no isHubCluster and no domain configuration
+  - it: should default to false when no isHubCluster and no domain configuration
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        secretStore:
+          backend: "vault"
+        # No domain configuration provided
+      clusterGroup:
+        isHubCluster: null  # Explicitly null to trigger fallback logic
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  # Test 7: Should still create unsealjob when hashicorp-vault app exists regardless of hub status
+  - it: should create unsealjob when hashicorp-vault app exists even on managed cluster
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        hubClusterDomain: "apps.hub.example.com"
+        localClusterDomain: "apps.spoke.example.com"
+      clusterGroup:
+        isHubCluster: false  # This confirms it's a managed cluster
+        applications:
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  # Test 8: isHubCluster true with no domain configuration
+  - it: should use isHubCluster true when no domain configuration is provided
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        # No domain configuration provided
+      clusterGroup:
+        isHubCluster: true
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+
+  # Test 9: isHubCluster false with no domain configuration
+  - it: should use isHubCluster false when no domain configuration is provided
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        secretStore:
+          backend: "vault"
+        # No domain configuration provided
+      clusterGroup:
+        isHubCluster: false
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - hasDocuments:
+          count: 0

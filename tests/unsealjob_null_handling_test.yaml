@@ -7,7 +7,7 @@ tests:
   - it: should not output an unsealjob by default
     asserts:
       - hasDocuments:
-          count: 1
+          count: 0
 
   - it: should render the unsealVault job when hashicorp-vault exists and no null applications
     set:

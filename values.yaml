@@ -16,7 +16,10 @@ global:
 # Note that sometimes changing helm values might require a hard refresh (https://github.com/helm/helm/issues/3486)
 clusterGroup:
   name: example
-  isHubCluster: true
+  # DEPRECATED: isHubCluster is deprecated. Use global.localClusterDomain and global.hubClusterDomain instead.
+  # When both domain values are set, hub cluster detection will be based on whether they are equal.
+  # This field is kept for backwards compatibility when domain values are not set.
+  # isHubCluster: true
   targetCluster: in-cluster
   sharedValueFiles: []
 
