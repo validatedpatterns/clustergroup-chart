@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.38](https://img.shields.io/badge/Version-0.9.38-informational?style=flat-square)
+![Version: 0.9.39](https://img.shields.io/badge/Version-0.9.39-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -65,7 +65,6 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.imperative.serviceAccountName | string | `"imperative-sa"` |  |
 | clusterGroup.imperative.valuesConfigMap | string | `"helm-values-configmap"` |  |
 | clusterGroup.imperative.verbosity | string | `""` |  |
-| clusterGroup.isHubCluster | bool | `true` |  |
 | clusterGroup.managedClusterGroups | object | `{}` |  |
 | clusterGroup.name | string | `"example"` |  |
 | clusterGroup.namespaces | list | `[]` |  |
