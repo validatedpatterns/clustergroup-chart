@@ -60,7 +60,7 @@ tests:
           value: test-app
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/common-values.yaml"
+          content: "/shared/common-values.yaml"
 
   - it: should render application with multiple sharedValueFiles entries
     set:
@@ -88,13 +88,13 @@ tests:
           value: test-app
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/common-values.yaml"
+          content: "/shared/common-values.yaml"
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/environment-values.yaml"
+          content: "/shared/environment-values.yaml"
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/cluster-specific-values.yaml"
+          content: "/shared/cluster-specific-values.yaml"
 
   - it: should render application with templated sharedValueFiles using global values
     set:
@@ -124,13 +124,13 @@ tests:
           value: test-app
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/values-openshift.yaml"
+          content: "/shared/values-openshift.yaml"
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/values-openshift-4.14.yaml"
+          content: "/shared/values-openshift-4.14.yaml"
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/values-hub.yaml"
+          content: "/shared/values-hub.yaml"
 
   - it: should render multisource application with sharedValueFiles
     set:
@@ -196,10 +196,10 @@ tests:
           value: test-app
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/common-values.yaml"
+          content: "/shared/common-values.yaml"
       - contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/extra/app-specific-values.yaml"
+          content: "/extra/app-specific-values.yaml"
 
   - it: should apply sharedValueFiles to all applications in the cluster group
     set:
@@ -228,73 +228,13 @@ tests:
           value: app-one
         contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/cluster-wide-values.yaml"
+          content: "/shared/cluster-wide-values.yaml"
       - documentSelector:
           path: metadata.name
           value: app-two
         contains:
           path: spec.source.helm.valueFiles
-          content: "$patternref/shared/cluster-wide-values.yaml"
-
-  - it: should not add prefix when value file already starts with $patternref/
-    set:
-      global:
-        repoURL: https://github.com/validatedpatterns/test-pattern
-        targetRevision: main
-        pattern: test-pattern
-      clusterGroup:
-        name: hub
-        sharedValueFiles:
-          - "$patternref/already-prefixed-values.yaml"
-          - "/not-prefixed-values.yaml"
-        applications:
-          - name: test-app
-            namespace: test-namespace
-            path: charts/test-app
-    asserts:
-      - isKind:
-          of: Application
-      - hasDocuments:
-          count: 1
-      - equal:
-          path: metadata.name
-          value: test-app
-      - contains:
-          path: spec.source.helm.valueFiles
-          content: "$patternref/already-prefixed-values.yaml"
-      - contains:
-          path: spec.source.helm.valueFiles
-          content: "$patternref/not-prefixed-values.yaml"
-
-  - it: should handle extraValueFiles prefixing correctly
-    set:
-      global:
-        repoURL: https://github.com/validatedpatterns/test-pattern
-        targetRevision: main
-        pattern: test-pattern
-      clusterGroup:
-        name: hub
-        applications:
-          - name: test-app
-            namespace: test-namespace
-            path: charts/test-app
-            extraValueFiles:
-              - "$patternref/already-prefixed-extra.yaml"
-              - "/not-prefixed-extra.yaml"
-    asserts:
-      - isKind:
-          of: Application
-      - hasDocuments:
-          count: 1
-      - equal:
-          path: metadata.name
-          value: test-app
-      - contains:
-          path: spec.source.helm.valueFiles
-          content: "$patternref/already-prefixed-extra.yaml"
-      - contains:
-          path: spec.source.helm.valueFiles
-          content: "$patternref/not-prefixed-extra.yaml"
+          content: "/shared/cluster-wide-values.yaml"
 
   - it: should not include sharedValueFiles when not specified at clusterGroup level
     set:

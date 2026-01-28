@@ -115,8 +115,13 @@ spec:
           {{- end }}
       valueFiles:
       {{- include "clustergroup.app.globalvalues.valuefiles" $ | nindent 6 }}
-      {{- include "clustergroup.sharedvaluefiles" (list . $) | nindent 6 }}
-      {{- include "clustergroup.app.extravaluefiles" (list . $) | nindent 6 }}
+      {{/* We cannot use the clustergroup.sharedvaluefiles/extravaluefiles because there is no prefix when not using multisource */}}
+      {{- range $valueFile := $.Values.clusterGroup.sharedValueFiles }}
+      - {{ tpl $valueFile $ | quote }}
+      {{- end }}
+      {{- range $valueFile := .extraValueFiles }}
+      - {{ tpl $valueFile $ | quote }}
+      {{- end }}
       parameters:
         {{- include "clustergroup.app.globalvalues.helmparameters" $ | nindent 8 }}
         {{- range .extraHubClusterDomainFields }}
