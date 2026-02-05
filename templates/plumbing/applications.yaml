@@ -1,4 +1,4 @@
-{{- if ($.Values.global.deletePattern | default "0" | int | ne 1) }} {{- /* When a pattern is deleting applications should be removed */}}
+{{- if ($.Values.global.deletePattern | ne "DeleteChildApps") }} {{- /* When a pattern is deleting applications should be removed */}}
 {{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
 {{- range .Values.clusterGroup.applications }}
 {{- if . }} {{- /* Skip null applications */}}

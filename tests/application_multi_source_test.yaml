@@ -62,7 +62,7 @@ tests:
           value: acm
         lengthEqual:
           path: spec.sources[1].helm.parameters
-          count: 15
+          count: 16
       - documentSelector:
           path: metadata.name
           value: vault
@@ -70,7 +70,7 @@ tests:
           path: spec.sources[1].repoURL
           value: https://charts.validatedpatterns.io
 
-  - it: should render a multisource applications and its extraparameters
+  - it: should render a multisource applications and its 2 extraparameters
     set:
       global:
         repoURL: https://github.com/validatedpatterns/multicloud-gitops
@@ -96,4 +96,4 @@ tests:
           value: acm
         lengthEqual:
           path: spec.sources[1].helm.parameters
-          count: 17
+          count: 18
