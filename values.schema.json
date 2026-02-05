@@ -200,7 +200,7 @@
         "deletePattern": {
           "type": "string",
           "readOnly": true,
-          "description": "Flag set by the patterns operator when a pattern CR is being deleted. When set to 1, the clustergroup chart will not render applications, allowing them to be removed before other resources. This prevents applications from becoming impossible to delete if their operators, webhooks, etc. are destroyed in the wrong order. Defaults to 0 (not deleting).",
+          "description": "Flag set by the patterns operator when a pattern CR is being deleted. When set to DeleteChildApps, the clustergroup chart will not render applications, allowing them to be removed before other resources. This prevents applications from becoming impossible to delete if their operators, webhooks, etc. are destroyed in the wrong order. Defaults to none (not deleting).",
           "default": "none"
         }
       },
