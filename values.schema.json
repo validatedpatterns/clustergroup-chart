@@ -770,7 +770,7 @@
         },
         "image": {
           "type": "string",
-          "default": "registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest"
+          "default": "quay.io/validatedpatterns/imperative-container:v1"
         },
         "namespace": {
           "type": "string",
@@ -868,7 +868,7 @@
         },
         "image": {
           "type": "string",
-          "default": "registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:latest"
+          "default": "quay.io/validatedpatterns/imperative-container:v1"
         },
         "tags": {
           "type": "string"

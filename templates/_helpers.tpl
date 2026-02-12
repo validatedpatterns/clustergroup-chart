@@ -14,6 +14,8 @@ Default always defined top-level variables for helm charts
   value: {{ $.Values.global.pattern }}
 - name: global.clusterDomain
   value: {{ $.Values.global.clusterDomain }}
+- name: global.localClusterName
+  value: {{ $.Values.global.localClusterName }}
 - name: global.clusterVersion
   value: "{{ $.Values.global.clusterVersion }}"
 - name: global.clusterPlatform
@@ -53,6 +55,9 @@ Default always defined valueFiles to be included in Applications
 {{- end }}
 {{- if $.Values.global.clusterVersion }}
 - "/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+{{- end }}
+{{- if $.Values.global.localClusterName }}
+- "/values-{{ $.Values.global.localClusterName }}.yaml"
 {{- end }}
 {{- if $.Values.global.extraValueFiles }}
 {{- range $.Values.global.extraValueFiles }}
@@ -102,6 +107,9 @@ Default always defined valueFiles to be included in Applications but with a pref
 {{- end }}
 {{- if $.Values.global.clusterVersion }}
 - "$patternref/values-{{ $.Values.global.clusterVersion }}-{{ $.Values.clusterGroup.name }}.yaml"
+{{- end }}
+{{- if $.Values.global.localClusterName }}
+- "$patternref/values-{{ $.Values.global.localClusterName }}.yaml"
 {{- end }}
 {{- if $.Values.global.extraValueFiles }}
 {{- range $.Values.global.extraValueFiles }}
