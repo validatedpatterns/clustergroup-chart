@@ -203,3 +203,32 @@ tests:
               - echo
             image: test
             name: test
+
+  - it: should render volumes correctly when configManagementPlugins is set
+    set:
+      clusterGroup:
+        argoCD:
+          configManagementPlugins:
+            - name: test
+              image: test
+              pluginConfig: |
+                test
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.repo.volumes
+          content:
+            configMap:
+              name: kube-root-ca.crt
+            name: kube-root-ca
+      - contains:
+          path: spec.repo.volumes
+          content:
+            emptyDir: {}
+            name: cmp-tmp
+      - contains:
+          path: spec.repo.volumes
+          content:
+            configMap:
+              name: argocd-cmp-test
+            name: test
