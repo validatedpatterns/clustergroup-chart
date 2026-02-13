@@ -99,6 +99,9 @@ spec:
       name: trusted-hub-bundle
     - emptyDir: {}
       name: ca-bundles
+{{- if len $.Values.clusterGroup.argoCD.volumes }}
+{{ toYaml $.Values.clusterGroup.argoCD.volumes | indent 4 }}
+{{- end }}
 {{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
     - emptyDir: {}
       name: cmp-tmp
@@ -131,6 +134,9 @@ spec:
           - mountPath: /home/argocd/cmp-server/config/plugin.yaml
             subPath: plugin.yaml
             name: {{ $cmp.name }}
+{{- end }}
+{{- if $cmp.volumeMounts }}
+{{ toYaml $cmp.volumeMounts | indent 10 }}
 {{- end }}
 {{- end }}
 {{- end }}

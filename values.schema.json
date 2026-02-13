@@ -676,6 +676,10 @@
           "type": "array",
           "description": "A list of initContainers to add to the repo-server if needed"
         },
+        "volumes": {
+          "type": "array",
+          "description": "A list of volumes to add to the repo-server if needed"
+        },
         "resourceTrackingMethod": {
           "type": "string",
           "description": "ResourceTrackingMethod defines how Argo CD should track resources that it manages",
@@ -700,7 +704,7 @@
     },
     "ArgoCDConfigManagementPlugin": {
       "type": "object",
-      "additionalProperties": true,
+      "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
@@ -713,6 +717,10 @@
         "imagePullPolicy": {
           "type": "string",
           "description": "Image pull policy for the sidecar. Defaults to 'Always'"
+        },
+        "volumeMounts": {
+          "type": "array",
+          "description": "Additional volumeMounts for the sidecar"
         },
         "pluginConfig": {
           "type": "string",

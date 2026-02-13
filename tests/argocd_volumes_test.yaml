@@ -1,0 +1,20 @@
+suite: Test argocd with volumes
+templates:
+  - templates/plumbing/argocd.yaml
+release:
+  name: release-test
+tests:
+  - it: should render the additional custom volumes correctly
+    set:
+      clusterGroup:
+        argoCD:
+          volumes:
+            - emptyDir: {}
+              name: test
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.repo.volumes
+          content:
+            emptyDir: {}
+            name: test

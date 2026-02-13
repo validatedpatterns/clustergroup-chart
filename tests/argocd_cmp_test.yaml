@@ -1,0 +1,52 @@
+suite: Test argocd with configManagementPlugins
+templates:
+  - templates/plumbing/argocd.yaml
+release:
+  name: release-test
+tests:
+  - it: should render the volumes and the sidecarContainer from CMP correctly
+    set:
+      clusterGroup:
+        argoCD:
+          configManagementPlugins:
+            - name: test-cmp
+              image: test-cmp-img
+              pluginConfig: |
+                test-cmp-config
+              volumeMounts:
+                - mountPath: /test
+                  name: test-cmp-volumemount
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.repo.volumes
+          content:
+            emptyDir: {}
+            name: cmp-tmp
+      - contains:
+          path: spec.repo.volumes
+          content:
+            configMap:
+              name: argocd-cmp-test-cmp
+            name: test-cmp
+      - contains:
+          path: spec.repo.sidecarContainers
+          content:
+            name: test-cmp
+            command: [/var/run/argocd/argocd-cmp-server]
+            image: test-cmp-img
+            imagePullPolicy: Always
+            securityContext:
+              runAsNonRoot: true
+            volumeMounts:
+              - mountPath: /var/run/argocd
+                name: var-files
+              - mountPath: /home/argocd/cmp-server/plugins
+                name: plugins
+              - mountPath: /tmp
+                name: cmp-tmp
+              - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+                subPath: plugin.yaml
+                name: test-cmp
+              - mountPath: /test
+                name: test-cmp-volumemount
