@@ -72,6 +72,9 @@ spec:
         name: trusted-hub-bundle
       - mountPath: /tmp/ca-bundles
         name: ca-bundles
+{{- if len $.Values.clusterGroup.argoCD.initContainers }}
+{{ toYaml $.Values.clusterGroup.argoCD.initContainers | indent 4 }}
+{{- end }}
     resources:
       limits:
         cpu: "1"
@@ -96,9 +99,6 @@ spec:
       name: trusted-hub-bundle
     - emptyDir: {}
       name: ca-bundles
-{{- if len $.Values.clusterGroup.argoCD.initContainers }}
-{{ $.Values.clusterGroup.argoCD.initContainers | toPrettyJson }}
-{{- end }}
 {{- if len $.Values.clusterGroup.argoCD.configManagementPlugins }}
     sidecarContainers:
 {{- range $cmp := $.Values.clusterGroup.argoCD.configManagementPlugins }}

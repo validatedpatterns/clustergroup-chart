@@ -180,3 +180,26 @@ tests:
                 kinds:
                 - Foo
                 - Baz
+
+  - it: should render custom initContainers correctly
+    set:
+      clusterGroup:
+        argoCD:
+          initContainers:
+            - command:
+                - bash
+                - -c
+                - echo
+              image: test
+              name: test
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.repo.initContainers
+          content:
+            command:
+              - bash
+              - -c
+              - echo
+            image: test
+            name: test
