@@ -30,6 +30,7 @@ clusterGroup:
 
   argoCD:
     initContainers: []
+    env: []
     volumes: []
     volumeMounts: []
     configManagementPlugins: []

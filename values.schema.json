@@ -684,6 +684,10 @@
           "type": "array",
           "description": "A list of volumeMounts to add to the repo-server if needed"
         },
+        "env": {
+          "type": "array",
+          "description": "A list of environment variables to add to the repo-server if needed"
+        },
         "resourceTrackingMethod": {
           "type": "string",
           "description": "ResourceTrackingMethod defines how Argo CD should track resources that it manages",

@@ -1,0 +1,20 @@
+suite: Test argocd with env
+templates:
+  - templates/plumbing/argocd.yaml
+release:
+  name: release-test
+tests:
+  - it: should render the env correctly
+    set:
+      clusterGroup:
+        argoCD:
+          env:
+            - name: env-name
+              value: env-value
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.repo.env
+          content:
+            name: env-name
+            value: env-value
