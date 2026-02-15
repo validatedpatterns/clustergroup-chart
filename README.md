@@ -44,6 +44,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.argoCD.resourceHealthChecks[1].group | string | `"serving.kserve.io"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[1].kind | string | `"InferenceService"` |  |
 | clusterGroup.argoCD.resourceTrackingMethod | string | `"label"` |  |
+| clusterGroup.argoCD.volumeMounts | list | `[]` |  |
 | clusterGroup.argoCD.volumes | list | `[]` |  |
 | clusterGroup.extraObjects | object | `{}` |  |
 | clusterGroup.imperative.activeDeadlineSeconds | int | `3600` |  |

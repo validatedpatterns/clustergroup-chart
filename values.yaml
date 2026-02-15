@@ -31,6 +31,7 @@ clusterGroup:
   argoCD:
     initContainers: []
     volumes: []
+    volumeMounts: []
     configManagementPlugins: []
     # resource tracking can be set to annotation, label, or annotation+label
     resourceTrackingMethod: label
