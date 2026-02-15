@@ -123,6 +123,9 @@ spec:
         imagePullPolicy: {{ coalesce $cmp.imagePullPolicy "Always" }}
         securityContext:
           runAsNonRoot: true
+{{- if $cmp.env }}
+        env: {{ $cmp.env | toPrettyJson }}
+{{- end }}
         volumeMounts:
           - mountPath: /var/run/argocd
             name: var-files

@@ -13,6 +13,9 @@ tests:
               image: test-cmp-img
               pluginConfig: |
                 test-cmp-config
+              env:
+              - name: env-name
+                value: env-value
               volumeMounts:
                 - mountPath: /test
                   name: test-cmp-volumemount
@@ -38,6 +41,9 @@ tests:
             imagePullPolicy: Always
             securityContext:
               runAsNonRoot: true
+            env:
+            - name: env-name
+              value: env-value
             volumeMounts:
               - mountPath: /var/run/argocd
                 name: var-files

@@ -718,6 +718,10 @@
           "type": "string",
           "description": "Image pull policy for the sidecar. Defaults to 'Always'"
         },
+        "env": {
+          "type": "array",
+          "description": "Environment variables for the sidecar"
+        },
         "volumeMounts": {
           "type": "array",
           "description": "Additional volumeMounts for the sidecar"
