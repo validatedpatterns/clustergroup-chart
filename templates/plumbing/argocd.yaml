@@ -55,6 +55,7 @@ spec:
       g, admin, role:admin
     scopes: '[groups, email]'
   repo:
+    env: {{ $.Values.clusterGroup.argoCD.env | toPrettyJson }}
     initContainers:
     - command:
       - bash
@@ -85,6 +86,9 @@ spec:
     volumeMounts:
     - mountPath: /etc/pki/tls/certs
       name: ca-bundles
+{{- if len $.Values.clusterGroup.argoCD.volumeMounts }}
+{{ toYaml $.Values.clusterGroup.argoCD.volumeMounts | indent 4 }}
+{{- end }}
     volumes:
     - configMap:
         name: kube-root-ca.crt
@@ -123,6 +127,9 @@ spec:
         imagePullPolicy: {{ coalesce $cmp.imagePullPolicy "Always" }}
         securityContext:
           runAsNonRoot: true
+{{- if $cmp.env }}
+        env: {{ $cmp.env | toPrettyJson }}
+{{- end }}
         volumeMounts:
           - mountPath: /var/run/argocd
             name: var-files

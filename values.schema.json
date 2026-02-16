@@ -680,6 +680,14 @@
           "type": "array",
           "description": "A list of volumes to add to the repo-server if needed"
         },
+        "volumeMounts": {
+          "type": "array",
+          "description": "A list of volumeMounts to add to the repo-server if needed"
+        },
+        "env": {
+          "type": "array",
+          "description": "A list of environment variables to add to the repo-server if needed"
+        },
         "resourceTrackingMethod": {
           "type": "string",
           "description": "ResourceTrackingMethod defines how Argo CD should track resources that it manages",
@@ -717,6 +725,10 @@
         "imagePullPolicy": {
           "type": "string",
           "description": "Image pull policy for the sidecar. Defaults to 'Always'"
+        },
+        "env": {
+          "type": "array",
+          "description": "Environment variables for the sidecar"
         },
         "volumeMounts": {
           "type": "array",

@@ -1,0 +1,20 @@
+suite: Test argocd with volumeMounts
+templates:
+  - templates/plumbing/argocd.yaml
+release:
+  name: release-test
+tests:
+  - it: should render the additional custom volumeMounts correctly
+    set:
+      clusterGroup:
+        argoCD:
+          volumeMounts:
+            - name: test-volume
+              mountPath: /test
+    documentIndex: 0
+    asserts:
+      - contains:
+          path: spec.repo.volumeMounts
+          content:
+            name: test-volume
+            mountPath: /test
