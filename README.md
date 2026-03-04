@@ -8,6 +8,8 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.44: Default value of `resourceTrackingMethod` is now `annotation`
+* v0.9.43: Add support to `env`, `volumes` and `volumeMounts` in repository server
 * v0.9.38: Ensure sharedValueFiles and extraValueFiles are always prefixed with $patternref
 * v0.9.37: Use global.patternDelete value set by patterns operator when patterns are deleted
 * v0.9.32: Add labels and annotations to operatorgroups when included in namespaces
@@ -44,7 +46,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.argoCD.resourceHealthChecks[1].check | string | `"local health_status = {}\n\nhealth_status.status = \"Progressing\"\nhealth_status.message = \"Waiting for InferenceService to report status...\"\n\nif obj.status ~= nil then\n\n  local progressing = false\n  local degraded = false\n  local status_false = 0\n  local status_unknown = 0\n  local msg = \"\"\n\n  if obj.status.modelStatus ~= nil then\n    if obj.status.modelStatus.transitionStatus ~= \"UpToDate\" then\n      if obj.status.modelStatus.transitionStatus == \"InProgress\" then\n        progressing = true\n      else\n        degraded = true\n      end\n      msg = msg .. \"0: transitionStatus | \" .. obj.status.modelStatus.transitionStatus\n    end\n  end\n\n  if obj.status.conditions ~= nil then\n    for i, condition in pairs(obj.status.conditions) do\n\n      -- A condition is healthy if its status is True.\n      -- However, for the 'Stopped' condition, a 'False' status is the healthy state.\n      local is_healthy_condition = (condition.status == \"True\")\n      if condition.type == \"Stopped\" then\n        is_healthy_condition = (condition.status == \"False\")\n      end\n\n      if not is_healthy_condition then\n        -- This condition represents a problem, so update counters and the message.\n        if condition.status == \"Unknown\" then\n          status_unknown = status_unknown + 1\n        else\n          status_false = status_false + 1\n        end\n\n        msg = msg .. \" | \" .. i .. \": \" .. condition.type .. \" | \" .. condition.status\n        if condition.reason ~= nil and condition.reason ~= \"\" then\n          msg = msg .. \" | \" .. condition.reason\n        end\n        if condition.message ~= nil and condition.message ~= \"\" then\n          msg = msg .. \" | \" .. condition.message\n        end\n      end\n\n    end\n\n    if progressing == false and degraded == false and status_unknown == 0 and status_false == 0 then\n      health_status.status = \"Healthy\"\n      msg = \"InferenceService is healthy.\"\n    elseif degraded == false and status_unknown >= 0 then\n      health_status.status = \"Progressing\"\n    else\n      health_status.status = \"Degraded\"\n    end\n\n    health_status.message = msg\n  end\nend\n\nreturn health_status\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[1].group | string | `"serving.kserve.io"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[1].kind | string | `"InferenceService"` |  |
-| clusterGroup.argoCD.resourceTrackingMethod | string | `"label"` |  |
+| clusterGroup.argoCD.resourceTrackingMethod | string | `"annotation"` |  |
 | clusterGroup.argoCD.volumeMounts | list | `[]` |  |
 | clusterGroup.argoCD.volumes | list | `[]` |  |
 | clusterGroup.extraObjects | object | `{}` |  |

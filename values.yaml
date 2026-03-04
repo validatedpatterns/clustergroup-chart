@@ -35,7 +35,7 @@ clusterGroup:
     volumeMounts: []
     configManagementPlugins: []
     # resource tracking can be set to annotation, label, or annotation+label
-    resourceTrackingMethod: label
+    resourceTrackingMethod: annotation
     resourceHealthChecks:
       # Adding health checks to argocd to prevent pvc resources
       # that aren't bound state from blocking deployments
