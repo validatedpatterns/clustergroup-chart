@@ -62,7 +62,7 @@ tests:
           value: acm
         lengthEqual:
           path: spec.sources[1].helm.parameters
-          count: 17
+          count: 18
       - documentSelector:
           path: metadata.name
           value: vault
@@ -96,4 +96,4 @@ tests:
           value: acm
         lengthEqual:
           path: spec.sources[1].helm.parameters
-          count: 19
+          count: 20

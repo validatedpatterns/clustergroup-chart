@@ -36,7 +36,8 @@ Default always defined top-level variables for helm charts
   value: {{ $.Values.global.experimentalCapabilities | default "" }}
 - name: global.deletePattern
   value: {{ $.Values.global.deletePattern }}
-
+- name: global.gitOpsSubNamespace
+  value: {{ $.Values.global.gitOpsSubNamespace | default "" }}
 {{- end }} {{/* clustergroup.globalvaluesparameters */}}
 
 
