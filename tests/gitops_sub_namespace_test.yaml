@@ -1,0 +1,88 @@
+suite: Test gitOpsSubNamespace parameter
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should render gitOpsSubNamespace as empty string when not set
+    set:
+      clusterGroup:
+        applications:
+          test-app:
+            name: test-app
+            namespace: test-ns
+            project: default
+            path: charts/test
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.source.helm.parameters
+          content:
+            name: global.gitOpsSubNamespace
+            value:
+
+  - it: should render gitOpsSubNamespace when set to a specific namespace
+    set:
+      global:
+        gitOpsSubNamespace: my-gitops-ns
+      clusterGroup:
+        applications:
+          test-app:
+            name: test-app
+            namespace: test-ns
+            project: default
+            path: charts/test
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.source.helm.parameters
+          content:
+            name: global.gitOpsSubNamespace
+            value: my-gitops-ns
+
+  - it: should render gitOpsSubNamespace in multisource applications when set
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+        gitOpsSubNamespace: my-gitops-ns
+      clusterGroup:
+        applications:
+          test-app:
+            name: test-app
+            namespace: test-ns
+            project: default
+            chart: test-chart
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.sources[1].helm.parameters
+          content:
+            name: global.gitOpsSubNamespace
+            value: my-gitops-ns
+
+  - it: should render gitOpsSubNamespace as empty in multisource applications when not set
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        applications:
+          test-app:
+            name: test-app
+            namespace: test-ns
+            project: default
+            chart: test-chart
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.sources[1].helm.parameters
+          content:
+            name: global.gitOpsSubNamespace
+            value:
