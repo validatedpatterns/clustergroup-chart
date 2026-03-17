@@ -18,6 +18,31 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 * v0.9.23: Update dependencies on helm repository builder.
 * v0.9.21: Include dependency on vp-rbac. This will be needed to support OLMv1 subscriptions soon.
 
+### Resource Actions
+
+Custom resource actions can be configured on the ArgoCD instance via `clusterGroup.argoCD.resourceActions`.
+This allows defining Lua-based actions that appear in the ArgoCD UI for specific resource kinds.
+
+For example, to add a "scale up" action for Deployments:
+
+```yaml
+clusterGroup:
+  argoCD:
+    resourceActions:
+      - group: apps
+        kind: Deployment
+        action: |
+          local os = require("os")
+          local actions = {}
+          actions["scale-up"] = {["disabled"] = false}
+          local replicas = 1
+          if obj.spec.replicas ~= nil then
+            replicas = obj.spec.replicas + 1
+          end
+          local patch = {["spec"] = {["replicas"] = replicas}}
+          return actions, patch
+```
+
 **Homepage:** <https://github.com/validatedpatterns/clustergroup-chart>
 
 ## Maintainers
@@ -40,6 +65,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.argoCD.configManagementPlugins | list | `[]` |  |
 | clusterGroup.argoCD.env | list | `[]` |  |
 | clusterGroup.argoCD.initContainers | list | `[]` |  |
+| clusterGroup.argoCD.resourceActions | list | `[]` |  |
 | clusterGroup.argoCD.resourceExclusions | string | `"- apiGroups:\n  - tekton.dev\n  kinds:\n  - TaskRun\n  - PipelineRun\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].check | string | `"hs = {}\nif obj.status ~= nil then\n  if obj.status.phase ~= nil then\n    if obj.status.phase == \"Pending\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    elseif obj.status.phase == \"Bound\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    end\n  end\nend\nhs.status = \"Progressing\"\nhs.message = \"Waiting for PVC\"\nreturn hs\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].kind | string | `"PersistentVolumeClaim"` |  |

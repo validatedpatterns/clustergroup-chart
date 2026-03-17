@@ -133,6 +133,7 @@ clusterGroup:
 
           return health_status
 
+    resourceActions: []
     resourceExclusions: |
       - apiGroups:
         - tekton.dev
