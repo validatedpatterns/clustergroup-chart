@@ -712,6 +712,13 @@
             "$ref": "#/definitions/ArgoCDResourceHealthChecks"
           },
           "description": "ResourceHealthChecks customizes resource health check behavior."
+        },
+        "resourceActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArgoCDResourceActions"
+          },
+          "description": "ResourceActions customizes resource action behavior."
         }
       }
     },
@@ -758,6 +765,21 @@
       "additionalProperties": false,
       "properties": {
         "check": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        }
+      }
+    },
+    "ArgoCDResourceActions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action": {
           "type": "string"
         },
         "group": {
