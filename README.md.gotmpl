@@ -19,6 +19,31 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 * v0.9.23: Update dependencies on helm repository builder.
 * v0.9.21: Include dependency on vp-rbac. This will be needed to support OLMv1 subscriptions soon.
 
+### Resource Actions
+
+Custom resource actions can be configured on the ArgoCD instance via `clusterGroup.argoCD.resourceActions`.
+This allows defining Lua-based actions that appear in the ArgoCD UI for specific resource kinds.
+
+For example, to add a "scale up" action for Deployments:
+
+```yaml
+clusterGroup:
+  argoCD:
+    resourceActions:
+      - group: apps
+        kind: Deployment
+        action: |
+          local os = require("os")
+          local actions = {}
+          actions["scale-up"] = {["disabled"] = false}
+          local replicas = 1
+          if obj.spec.replicas ~= nil then
+            replicas = obj.spec.replicas + 1
+          end
+          local patch = {["spec"] = {["replicas"] = replicas}}
+          return actions, patch
+```
+
 {{ template "chart.homepageLine" . }}
 
 {{ template "chart.maintainersSection" . }}

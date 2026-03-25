@@ -40,6 +40,9 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 | clusterGroup.argoCD.configManagementPlugins | list | `[]` |  |
 | clusterGroup.argoCD.env | list | `[]` |  |
 | clusterGroup.argoCD.initContainers | list | `[]` |  |
+| clusterGroup.argoCD.resourceActions[0].action | string | `"local os = require(\"os\")\nlocal actions = {}\nactions[\"scale-up\"] = {[\"disabled\"] = false}\nlocal replicas = 1\nif obj.spec.replicas ~= nil then\n  replicas = obj.spec.replicas + 1\nend\nlocal patch = {[\"spec\"] = {[\"replicas\"] = replicas}}\nreturn actions, patch\n"` |  |
+| clusterGroup.argoCD.resourceActions[0].group | string | `"apps"` |  |
+| clusterGroup.argoCD.resourceActions[0].kind | string | `"Deployment"` |  |
 | clusterGroup.argoCD.resourceExclusions | string | `"- apiGroups:\n  - tekton.dev\n  kinds:\n  - TaskRun\n  - PipelineRun\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].check | string | `"hs = {}\nif obj.status ~= nil then\n  if obj.status.phase ~= nil then\n    if obj.status.phase == \"Pending\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    elseif obj.status.phase == \"Bound\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    end\n  end\nend\nhs.status = \"Progressing\"\nhs.message = \"Waiting for PVC\"\nreturn hs\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].kind | string | `"PersistentVolumeClaim"` |  |

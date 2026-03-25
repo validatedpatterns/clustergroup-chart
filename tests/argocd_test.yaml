@@ -107,6 +107,36 @@ tests:
 
                 return health_status
 
+  - it: should not render resourceActions when empty
+    documentIndex: 0
+    asserts:
+      - isNotSubset:
+          path: spec
+          content:
+            resourceActions: []
+
+  - it: should render custom resourceActions correctly
+    set:
+      clusterGroup:
+        argoCD:
+          resourceActions:
+            - group: batch
+              kind: Job
+              action: |
+                local actions = {}
+                return actions
+    documentIndex: 0
+    asserts:
+      - isSubset:
+          path: spec
+          content:
+            resourceActions:
+              - group: batch
+                kind: Job
+                action: |
+                  local actions = {}
+                  return actions
+
   - it: should render custom resourceHealthChecks correctly
     set:
       clusterGroup:
