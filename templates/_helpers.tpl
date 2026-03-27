@@ -38,6 +38,8 @@ Default always defined top-level variables for helm charts
   value: {{ $.Values.global.deletePattern }}
 - name: global.gitOpsSubNamespace
   value: {{ $.Values.global.gitOpsSubNamespace | default "" }}
+- name: global.vpArgoNamespace
+  value: {{ $.Values.global.vpArgoNamespace }}
 {{- end }} {{/* clustergroup.globalvaluesparameters */}}
 
 
@@ -127,13 +129,14 @@ Called from common/clustergroup/templates/plumbing/projects.yaml
 {{- $projects := index . 0 }}
 {{- $namespace := index . 1 }}
 {{- $enabled := index . 2 }}
+{{- $argoNamespace := index . 3 }}
 {{- range $k, $v := $projects}}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: {{ $k }}
 {{- if (eq $enabled "plumbing") }}
-  namespace: openshift-gitops
+  namespace: {{ $argoNamespace }}
 {{- else }}
   namespace: {{ $namespace }}
 {{- end }}
@@ -155,21 +158,22 @@ status: {}
 {{- end }}
 {{- end }}
 
-{{/* 
+{{/*
   Helper function to generate AppProject from a list object.
-  Called from common/clustergroup/templates/plumbing/projects.yaml 
+  Called from common/clustergroup/templates/plumbing/projects.yaml
 */}}
 {{- define "clustergroup.template.plumbing.projects.list" -}}
 {{- $projects := index . 0 }}
 {{- $namespace := index . 1 }}
 {{- $enabled := index . 2 }}
+{{- $argoNamespace := index . 3 }}
 {{- range $projects}}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: {{ . }}
 {{- if (eq $enabled "plumbing") }}
-  namespace: openshift-gitops
+  namespace: {{ $argoNamespace }}
 {{- else }}
   namespace: {{ $namespace }}
 {{- end }}

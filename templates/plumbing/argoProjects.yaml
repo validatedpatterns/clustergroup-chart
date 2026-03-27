@@ -18,7 +18,7 @@
 {{- end }}
 
 {{- if kindIs "map" $projects }}
-{{- template "clustergroup.template.plumbing.projects.map" (list $projects $namespace $.Values.enabled) }}  
+{{- template "clustergroup.template.plumbing.projects.map" (list $projects $namespace $.Values.enabled $.Values.global.vpArgoNamespace) }}
 {{- else }}
 {{- range $projects }}
 apiVersion: argoproj.io/v1alpha1

@@ -1,6 +1,8 @@
 global:
   extraValueFiles: []
   pattern: common
+  # cluster-wide argo namespace
+  vpArgoNamespace: openshift-gitops
   secretLoader:
     disabled: false
   secretStore:

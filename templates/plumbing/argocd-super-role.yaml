@@ -1,24 +1,24 @@
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 # This CRB is also pre-created by the ACM policy (application-policies.yaml)
-# on managed clusters to ensure the openshift-gitops controller has cluster-admin
+# on managed clusters to ensure the ArgoCD controller has cluster-admin
 # before the first sync. It's kept here for non-ACM deployments.
 # See the commit messages around this change for a full explanation
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: openshift-gitops-cluster-admin-rolebinding
+  name: {{ $.Values.global.vpArgoNamespace }}-cluster-admin-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-admin
 subjects:
   - kind: ServiceAccount
-    name: openshift-gitops-argocd-application-controller
-    namespace: openshift-gitops
+    name: {{ $.Values.global.vpArgoNamespace }}-argocd-application-controller
+    namespace: {{ $.Values.global.vpArgoNamespace }}
   # NOTE: THIS MUST BE FIXED FOR MULTITENANT SETUP
   - kind: ServiceAccount
-    name: openshift-gitops-argocd-server
-    namespace: openshift-gitops
+    name: {{ $.Values.global.vpArgoNamespace }}-argocd-server
+    namespace: {{ $.Values.global.vpArgoNamespace }}
 ---
 # WARNING: ONLY USE THIS FOR MANAGING CLUSTERS NOT FOR REGULAR USERS
 apiVersion: rbac.authorization.k8s.io/v1
