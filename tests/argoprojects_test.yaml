@@ -105,7 +105,7 @@ tests:
       - hasDocuments:
           count: 2
       - documentSelector:
-          path: metadata.name  
+          path: metadata.name
           value: foo
         isSubset:
           path: spec
@@ -123,7 +123,7 @@ tests:
             sourceRepos:
             - '*'
       - documentSelector:
-          path: metadata.name  
+          path: metadata.name
           value: bar
         isSubset:
           path: spec
@@ -140,3 +140,64 @@ tests:
               kind: '*'
             sourceRepos:
             - '*'
+
+  - it: should use vpArgoNamespace for map projects when enabled is plumbing
+    set:
+      enabled: plumbing
+      global:
+        pattern: testpattern
+        vpArgoNamespace: my-custom-gitops
+      clusterGroup:
+        name: hub
+        argoProjects:
+          proj-one:
+          proj-two:
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentSelector:
+          path: metadata.name
+          value: proj-one
+        equal:
+          path: metadata.namespace
+          value: my-custom-gitops
+      - documentSelector:
+          path: metadata.name
+          value: proj-two
+        equal:
+          path: metadata.namespace
+          value: my-custom-gitops
+
+  - it: should use default vpArgoNamespace for map projects when enabled is plumbing
+    set:
+      enabled: plumbing
+      global:
+        pattern: testpattern
+        vpArgoNamespace: openshift-gitops
+      clusterGroup:
+        name: hub
+        argoProjects:
+          my-project:
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.namespace
+          value: openshift-gitops
+
+  - it: should use pattern namespace for map projects when enabled is not plumbing
+    set:
+      enabled: something-else
+      global:
+        pattern: testpattern
+        vpArgoNamespace: my-custom-gitops
+      clusterGroup:
+        name: hub
+        argoProjects:
+          my-project:
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.namespace
+          value: testpattern-hub

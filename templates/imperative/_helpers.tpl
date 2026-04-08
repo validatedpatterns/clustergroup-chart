@@ -46,15 +46,15 @@
   - 'sh'
   - '-c'
   - >-
-    if ! oc get secrets -n openshift-gitops vp-private-repo-credentials &> /dev/null; then
+    if ! oc get secrets -n {{ $.Values.global.vpArgoNamespace }} vp-private-repo-credentials &> /dev/null; then
       URL="{{ $.Values.global.repoURL }}";
     else
-      if ! oc get secrets -n openshift-gitops vp-private-repo-credentials -o go-template='{{ `{{index .data.sshPrivateKey | base64decode}}` }}' &>/dev/null; then
-        U="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{ `{{index .data.username | base64decode }}` }}')";
-        P="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{ `{{index .data.password | base64decode }}` }}')";
+      if ! oc get secrets -n {{ $.Values.global.vpArgoNamespace }} vp-private-repo-credentials -o go-template='{{ `{{index .data.sshPrivateKey | base64decode}}` }}' &>/dev/null; then
+        U="$(oc get secret -n {{ $.Values.global.vpArgoNamespace }} vp-private-repo-credentials -o go-template='{{ `{{index .data.username | base64decode }}` }}')";
+        P="$(oc get secret -n {{ $.Values.global.vpArgoNamespace }} vp-private-repo-credentials -o go-template='{{ `{{index .data.password | base64decode }}` }}')";
         URL=$(echo {{ $.Values.global.repoURL }} | sed -E "s/(https?:\/\/)/\1${U}:${P}@/");
       else
-        S="$(oc get secret -n openshift-gitops vp-private-repo-credentials -o go-template='{{ `{{index .data.sshPrivateKey | base64decode }}` }}')";
+        S="$(oc get secret -n {{ $.Values.global.vpArgoNamespace }} vp-private-repo-credentials -o go-template='{{ `{{index .data.sshPrivateKey | base64decode }}` }}')";
         mkdir -p --mode 0700 "${HOME}/.ssh";
         echo "${S}" > "${HOME}/.ssh/id_rsa";
         chmod 0600 "${HOME}/.ssh/id_rsa";
