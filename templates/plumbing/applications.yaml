@@ -81,7 +81,7 @@ spec:
           {{- end }}
           {{- range .overrides }}
           - name: {{ .name }}
-            value: {{ tpl .value $ | quote }}
+            value: {{ tpl (toString .value) $ | quote }}
           {{- if .forceString }}
             forceString: true
           {{- end }}
@@ -154,7 +154,7 @@ spec:
         {{- end }}
         {{- range .overrides }}
         - name: {{ .name }}
-          value: {{ tpl .value $ | quote }}
+          value: {{ tpl (toString .value) $ | quote }}
           {{- if .forceString }}
           forceString: true
           {{- end }}
