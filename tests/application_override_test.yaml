@@ -1,0 +1,103 @@
+suite: Test application helm overrides
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should add override parameters on multisource applications
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            overrides:
+              - name: test_override
+                value: test_value
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.sources[1].helm.parameters
+          content:
+            name: test_override
+            value: test_value
+
+  - it: should add override parameters on single-source applications
+    set:
+      clusterGroup:
+        applications:
+          test-app:
+            name: test-app
+            namespace: test-ns
+            project: default
+            path: charts/test
+            overrides:
+              - name: test_override
+                value: test_value
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.source.helm.parameters
+          content:
+            name: test_override
+            value: test_value
+
+  - it: should add forceString on override when specified
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            overrides:
+              - name: test_override
+                value: test_value
+                forceString: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.sources[1].helm.parameters
+          content:
+            name: test_override
+            value: test_value
+            forceString: true
+
+  - it: should render tpl in override value using global.repoURL
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            overrides:
+              - name: test_override
+                value: "{{ .Values.global.repoURL }}"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.sources[1].helm.parameters
+          content:
+            name: test_override
+            value: https://github.com/validatedpatterns/multicloud-gitops
