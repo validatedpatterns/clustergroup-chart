@@ -1,0 +1,28 @@
+suite: Test clusterGroup.targetCluster on Argo CD Applications
+templates:
+  - templates/plumbing/applications.yaml
+release:
+  name: release-test
+tests:
+  - it: should set spec.destination.name from clusterGroup.targetCluster
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        name: example
+        targetCluster: my-remote-cluster
+        namespaces: []
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.destination.name
+          value: my-remote-cluster
