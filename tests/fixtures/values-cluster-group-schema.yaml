@@ -1,0 +1,31 @@
+# Minimal values exercised by check-jsonschema in CI to keep clusterGroup fields
+# used by templates aligned with values.schema.json.
+global:
+  options:
+    syncPolicy: Automatic
+    installPlanApproval: Automatic
+    useCSV: true
+  multiSourceRepoUrl: https://charts.validatedpatterns.io
+
+clusterGroup:
+  name: schema-fixture
+  targetCluster: spoke-cluster-1
+  namespaces: []
+  sharedValueFiles:
+    - values-{{ $.Values.clusterGroup.name }}.yaml
+  applications:
+    schema-fixture-app:
+      name: schema-fixture-app
+      namespace: fixture-ns
+      project: default
+      path: charts/fixture
+      overrides:
+        - name: plain-override
+          value: plain
+        - name: tpl-override
+          value: "{{ .Values.global.multiSourceRepoUrl }}"
+          forceString: true
+      syncPolicy: manual
+      fileParameters:
+        - name: some-values
+          path: secrets://config/values.yaml

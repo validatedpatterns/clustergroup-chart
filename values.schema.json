@@ -178,6 +178,10 @@
           "readOnly": true,
           "description": "URL of the pattern's git repository, it is set automatically by the pattern's operator"
         },
+        "multiSourceRepoUrl": {
+          "type": "string",
+          "description": "Default Helm repository URL for multisource Argo CD Applications when an application entry does not set repoURL. Passed as a Helm parameter and used by templates under global.multiSourceRepoUrl."
+        },
         "hubClusterDomain": {
           "type": "string",
           "readOnly": true,
@@ -516,6 +520,17 @@
         "disabled": {
           "type": "boolean",
           "description": "Whether to disable namespace creation. If set to true, the namespace will be skipped."
+        },
+        "operatorGroup": {
+          "type": "boolean",
+          "description": "When false, no OperatorGroup is created for this namespace map entry."
+        },
+        "targetNamespaces": {
+          "type": "array",
+          "description": "OperatorGroup spec.targetNamespaces entries; when set and non-empty, overrides the default single-namespace target.",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -613,19 +628,66 @@
           "description": "List of extra fields that will be passed to ArgoCD."
         },
         "overrides": {
-          "type": "object"
+          "type": "array",
+          "description": "Extra Helm parameters for this application; rendered under spec.source.helm.parameters or spec.sources[1].helm.parameters.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string",
+                "description": "Parameter value; may contain Helm tpl expressions evaluated with the chart root context."
+              },
+              "forceString": {
+                "type": "boolean",
+                "description": "When true, sets forceString on the Argo CD Application helm parameter."
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ]
+          }
         },
         "fileParameters": {
           "type": "array",
-          "description": "FileParameters are file parameters to the helm template"
+          "description": "FileParameters are file parameters to the helm template",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "path"
+            ]
+          }
         },
         "ignoreDifferences": {
           "type": "array",
           "description": "IgnoreDifferences is a list of resources and their fields which should be ignored during comparison"
         },
         "syncPolicy": {
-          "type": "object",
-          "description": "SyncPolicy controls when and how a sync will be performed"
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "When set to Manual (any case), Argo CD syncPolicy is omitted for this application. Automatic uses the chart default. Other strings follow the same lowercasing rules in templates."
+            },
+            {
+              "type": "object",
+              "description": "Passed through to the Application spec.syncPolicy field as JSON."
+            }
+          ],
+          "description": "SyncPolicy controls when and how a sync will be performed; may be a string (e.g. Manual) or an object merged into the Application."
         },
         "namespace": {
           "type": "string",
