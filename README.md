@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.47](https://img.shields.io/badge/Version-0.9.47-informational?style=flat-square)
+![Version: 0.9.48](https://img.shields.io/badge/Version-0.9.48-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -8,6 +8,8 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.48: Templates in override values now render
+* v0.9.45: Default value of `resourceTrackingMethod` is now `annotation`
 * v0.9.44: Default value of `resourceTrackingMethod` is now `annotation`
 * v0.9.43: Add support to `env`, `volumes` and `volumeMounts` in repository server
 * v0.9.38: Ensure sharedValueFiles and extraValueFiles are always prefixed with $patternref
