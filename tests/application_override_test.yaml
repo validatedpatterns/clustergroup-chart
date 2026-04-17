@@ -101,3 +101,56 @@ tests:
           content:
             name: test_override
             value: https://github.com/validatedpatterns/multicloud-gitops
+
+  - it: should stringify boolean override values for multisource applications
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+            overrides:
+              - name: test_bool_true
+                value: true
+              - name: test_bool_false
+                value: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.sources[1].helm.parameters
+          content:
+            name: test_bool_true
+            value: "true"
+      - contains:
+          path: spec.sources[1].helm.parameters
+          content:
+            name: test_bool_false
+            value: "false"
+
+  - it: should stringify boolean override values for single-source applications
+    set:
+      clusterGroup:
+        applications:
+          test-app:
+            name: test-app
+            namespace: test-ns
+            project: default
+            path: charts/test
+            overrides:
+              - name: test_bool_true
+                value: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.source.helm.parameters
+          content:
+            name: test_bool_true
+            value: "true"
