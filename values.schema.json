@@ -719,6 +719,11 @@
             "$ref": "#/definitions/ArgoCDResourceActions"
           },
           "description": "ResourceActions customizes resource action behavior."
+        },
+        "rbac": {
+          "type": "object",
+          "description": "Rbac customizes ArgoCD RBAC policies.",
+          "additionalProperties": true
         }
       }
     },
