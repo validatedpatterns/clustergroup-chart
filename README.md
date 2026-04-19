@@ -8,6 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.50: Add support to custom `rbac` in `ArgoDC.spec`
 * v0.9.49: Boolean Templates in override values now also render correctly
 * v0.9.48: Templates in override values now render
 * v0.9.45: Default value of `resourceTrackingMethod` is now `annotation`
@@ -68,6 +69,7 @@ clusterGroup:
 | clusterGroup.argoCD.configManagementPlugins | list | `[]` |  |
 | clusterGroup.argoCD.env | list | `[]` |  |
 | clusterGroup.argoCD.initContainers | list | `[]` |  |
+| clusterGroup.argoCD.rbac | object | `{}` |  |
 | clusterGroup.argoCD.resourceActions | list | `[]` |  |
 | clusterGroup.argoCD.resourceExclusions | string | `"- apiGroups:\n  - tekton.dev\n  kinds:\n  - TaskRun\n  - PipelineRun\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].check | string | `"hs = {}\nif obj.status ~= nil then\n  if obj.status.phase ~= nil then\n    if obj.status.phase == \"Pending\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    elseif obj.status.phase == \"Bound\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    end\n  end\nend\nhs.status = \"Progressing\"\nhs.message = \"Waiting for PVC\"\nreturn hs\n"` |  |

@@ -53,12 +53,16 @@ spec:
           memory: 128Mi
   initialSSHKnownHosts: {}
   rbac:
+  {{- if $.Values.clusterGroup.argoCD.rbac }}
+    {{- toYaml $.Values.clusterGroup.argoCD.rbac | nindent 4 }}
+  {{- else }}
     defaultPolicy: role:readonly
     policy: |-
       g, system:cluster-admins, role:admin
       g, cluster-admins, role:admin
       g, admin, role:admin
     scopes: '[groups, email]'
+  {{- end }}
   repo:
     env: {{ $.Values.clusterGroup.argoCD.env | toPrettyJson }}
     initContainers:
