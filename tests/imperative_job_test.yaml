@@ -197,9 +197,12 @@ tests:
       - equal:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].name
           value: ansible-dev-mode
-      - equal:
+      - matchRegex:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
-          value: ansible-galaxy collection install -r "collections/requirements.yml"
+          pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
 
   - it: should inject inline requirements content when provided
     set:
@@ -226,6 +229,9 @@ tests:
       - matchRegex:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
           pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
 
   - it: should inject requirements and ansible.cfg heredocs when both contents are set
     set:
@@ -256,6 +262,9 @@ tests:
       - matchRegex:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
           pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
 
   - it: should inject ansible.cfg only when requirementsContent is empty
     set:
@@ -284,6 +293,9 @@ tests:
       - matchRegex:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
           pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
 
   - it: should inject inline ansible.cfg when ansibleCfgContent is provided
     set:
@@ -314,3 +326,6 @@ tests:
       - matchRegex:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
           pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'

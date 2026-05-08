@@ -99,6 +99,7 @@
     EOF
     {{- end }}
     ansible-galaxy collection install -r {{ $.Values.clusterGroup.imperative.ansibleDevMode.requirementsFile | quote }}
+    ansible-galaxy collection list
   volumeMounts:
     {{- include "imperative.volumemounts_ca" $ | indent 4 }}
 {{- end }}

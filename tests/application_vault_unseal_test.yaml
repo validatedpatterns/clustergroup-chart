@@ -185,9 +185,12 @@ tests:
       - equal:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].name
           value: ansible-dev-mode
-      - equal:
+      - matchRegex:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
-          value: ansible-galaxy collection install -r "dev/requirements.yml"
+          pattern: 'ansible-galaxy collection install -r "dev/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
 
   - it: should inject ansible.cfg in unseal ansible dev mode init when ansibleCfgContent is set
     set:
@@ -225,3 +228,6 @@ tests:
       - matchRegex:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
           pattern: 'ansible-galaxy collection install -r "dev/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
