@@ -93,6 +93,11 @@
 {{ . | nindent 4 }}
     EOF
     {{- end }}
+    {{- with $.Values.clusterGroup.imperative.ansibleDevMode.ansibleCfgContent }}
+    cat <<'EOF' > {{ $.Values.clusterGroup.imperative.ansibleDevMode.ansibleCfgFile | quote }}
+{{ . | nindent 4 }}
+    EOF
+    {{- end }}
     ansible-galaxy collection install -r {{ $.Values.clusterGroup.imperative.ansibleDevMode.requirementsFile | quote }}
   volumeMounts:
     {{- include "imperative.volumemounts_ca" $ | indent 4 }}

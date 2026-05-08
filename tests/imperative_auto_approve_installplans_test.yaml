@@ -37,3 +37,31 @@ tests:
       - equal:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
           value: ansible-galaxy collection install -r "ansible/requirements.yml"
+
+  - it: should inject ansible.cfg in auto-approve ansible dev mode when ansibleCfgContent is set
+    set:
+      global:
+        options:
+          autoApproveManualInstallPlans: true
+      clusterGroup:
+        imperative:
+          adminServiceAccountName: imperative-admin-sa
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: ansible/requirements.yml
+            ansibleCfgFile: ansible/ansible.cfg
+            ansibleCfgContent: |
+              [defaults]
+              collections_path=~/.ansible/collections:/usr/share/ansible/collections
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "ansible/ansible.cfg"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "ansible/requirements.yml"'

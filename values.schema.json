@@ -923,6 +923,14 @@
         "requirementsContent": {
           "type": "string",
           "default": ""
+        },
+        "ansibleCfgFile": {
+          "type": "string",
+          "default": "ansible.cfg"
+        },
+        "ansibleCfgContent": {
+          "type": "string",
+          "default": ""
         }
       },
       "required": [

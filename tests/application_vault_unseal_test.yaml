@@ -188,3 +188,40 @@ tests:
       - equal:
           path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
           value: ansible-galaxy collection install -r "dev/requirements.yml"
+
+  - it: should inject ansible.cfg in unseal ansible dev mode init when ansibleCfgContent is set
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: true
+        imperative:
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: dev/requirements.yml
+            ansibleCfgFile: dev/imperative-ansible.cfg
+            ansibleCfgContent: |
+              [defaults]
+              collections_path=~/.ansible/collections:/usr/share/ansible/collections
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "dev/imperative-ansible.cfg"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "dev/requirements.yml"'
