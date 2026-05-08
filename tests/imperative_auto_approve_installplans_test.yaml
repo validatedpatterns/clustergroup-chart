@@ -1,0 +1,39 @@
+suite: Test auto-approve installplans job
+templates:
+  - templates/imperative/auto-approve-installplans.yaml
+release:
+  name: release-test
+tests:
+  - it: should create auto-approve cronjob when option is enabled
+    set:
+      global:
+        options:
+          autoApproveManualInstallPlans: true
+      clusterGroup:
+        imperative:
+          adminServiceAccountName: imperative-admin-sa
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: CronJob
+
+  - it: should include ansible dev mode init container when enabled
+    set:
+      global:
+        options:
+          autoApproveManualInstallPlans: true
+      clusterGroup:
+        imperative:
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: ansible/requirements.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          value: ansible-galaxy collection install -r "ansible/requirements.yml"

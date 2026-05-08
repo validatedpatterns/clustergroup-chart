@@ -147,6 +147,10 @@ clusterGroup:
   imperative:
     jobs: []
     image: quay.io/validatedpatterns/imperative-container:v1
+    ansibleDevMode:
+      enabled: false
+      requirementsFile: "requirements.yml"
+      requirementsContent: ""
     namespace: "imperative"
     # configmap name in the namespace that will contain all helm values
     valuesConfigMap: "helm-values-configmap"

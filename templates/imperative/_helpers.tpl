@@ -73,6 +73,32 @@
     git clone --recurse-submodules --single-branch ${BRANCH} --depth 1 -- "${URL}" /git/repo;
     chmod 0770 /git/{repo,home};
 {{- end }}
+
+{{/* Optional ansible dev mode init container */}}
+{{- define "imperative.initcontainers.ansible-dev-mode" }}
+{{- if $.Values.clusterGroup.imperative.ansibleDevMode.enabled }}
+- name: ansible-dev-mode
+  image: {{ $.Values.clusterGroup.imperative.image }}
+  imagePullPolicy: {{ $.Values.clusterGroup.imperative.imagePullPolicy }}
+  env:
+    - name: HOME
+      value: /git/home
+  workingDir: /git/repo
+  command:
+  - 'sh'
+  - '-c'
+  - |-
+    {{- with $.Values.clusterGroup.imperative.ansibleDevMode.requirementsContent }}
+    cat <<'EOF' > {{ $.Values.clusterGroup.imperative.ansibleDevMode.requirementsFile | quote }}
+{{ . | nindent 4 }}
+    EOF
+    {{- end }}
+    ansible-galaxy collection install -r {{ $.Values.clusterGroup.imperative.ansibleDevMode.requirementsFile | quote }}
+  volumeMounts:
+    {{- include "imperative.volumemounts_ca" $ | indent 4 }}
+{{- end }}
+{{- end }}
+
 {{/* Final done container */}}
 {{- define "imperative.containers.done" }}
 - name: "done"

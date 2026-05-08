@@ -23,6 +23,7 @@ spec:
             # reason for that is ansible refuses to create temporary folders in there
             {{- include  "imperative.initcontainers.fetch-ca" . | indent 12 }}
             {{- include  "imperative.initcontainers.gitinit-ca" . | indent 12 }}
+            {{- include  "imperative.initcontainers.ansible-dev-mode" . | indent 12 }}
     {{- range $.Values.clusterGroup.imperative.jobs }}
       {{- if ne (.disabled | default "false" | toString | lower ) "true" }}
             - name: {{ .name }}

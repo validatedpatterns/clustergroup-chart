@@ -143,3 +143,49 @@ tests:
     asserts:
       - hasDocuments:
           count: 1
+
+  - it: should add ansible dev mode init container when enabled
+    set:
+      clusterGroup:
+        imperative:
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: collections/requirements.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          value: ansible-galaxy collection install -r "collections/requirements.yml"
+
+  - it: should inject inline requirements content when provided
+    set:
+      clusterGroup:
+        imperative:
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: collections/requirements.yml
+            requirementsContent: |
+              collections:
+                - name: rhvp.cluster_utils
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'

@@ -824,6 +824,9 @@
           "type": "string",
           "default": "quay.io/validatedpatterns/imperative-container:v1"
         },
+        "ansibleDevMode": {
+          "$ref": "#/definitions/AnsibleDevMode"
+        },
         "namespace": {
           "type": "string",
           "default": "imperative",
@@ -904,6 +907,28 @@
         "jobs"
       ],
       "title": "Imperative"
+    },
+    "AnsibleDevMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "requirementsFile": {
+          "type": "string",
+          "default": "requirements.yml"
+        },
+        "requirementsContent": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "title": "AnsibleDevMode"
     },
     "Job": {
       "type": "object",

@@ -158,3 +158,33 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+
+  - it: should include ansible dev mode init container when enabled
+    set:
+      global:
+        repoURL: https://github.com/validatedpatterns/multicloud-gitops
+        multiSourceRepoUrl: https://charts.validatedpatterns.io
+      clusterGroup:
+        isHubCluster: true
+        imperative:
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: dev/requirements.yml
+        applications:
+          acm:
+            name: acm
+            namespace: open-cluster-management
+            project: hub
+            chart: acm
+            chartVersion: 0.1.*
+    asserts:
+      - isKind:
+          of: CronJob
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          value: ansible-galaxy collection install -r "dev/requirements.yml"
