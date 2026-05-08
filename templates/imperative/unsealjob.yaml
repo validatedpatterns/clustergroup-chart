@@ -55,6 +55,9 @@ spec:
                 {{- end }}
                 - -e
                 - "@/values/values.yaml"
+                {{- range ($.Values.clusterGroup.imperative.extraPlaybookArgs | default list) }}
+                - {{ . | quote }}
+                {{- end }}
                 - -t
                 - 'vault_init,vault_unseal,vault_secrets_init,vault_spokes_init'
                 - "rhvp.cluster_utils.vault"

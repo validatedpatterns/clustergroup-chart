@@ -54,6 +54,43 @@ tests:
           path: spec.jobTemplate.spec.template.spec.serviceAccountName
           value: imperative-sa
 
+  - it: should append clusterGroup.imperative.extraPlaybookArgs before the playbook path
+    set:
+      clusterGroup:
+        imperative:
+          cronJobName: pattern-cronjob
+          jobName: pattern-job
+          namespace: imperative
+          schedule: "0 2 * * *"
+          activeDeadlineSeconds: 3600
+          serviceAccountName: imperative-sa
+          image: quay.io/validatedpatterns/imperative-container:v1
+          imagePullPolicy: Always
+          extraPlaybookArgs:
+            - "--diff"
+            - "--check"
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+              verbosity: "-v"
+              tags: "deploy,config"
+              timeout: "900"
+              extravars:
+                - "environment=production"
+                - "region=us-east-1"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command
+          content: "--diff"
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command
+          content: "--check"
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command
+          content: "deploy-application.yml"
+
   - it: should create multiple init containers for multiple jobs
     set:
       clusterGroup:

@@ -8,7 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
-* v0.9.51: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development
+* v0.9.51: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development. Add extraPlaybookArgs to imperative as well.
 * v0.9.50: Add support to custom `rbac` in `ArgoDC.spec`
 * v0.9.49: Boolean Templates in override values now also render correctly
 * v0.9.48: Templates in override values now render
@@ -94,6 +94,7 @@ clusterGroup:
 | clusterGroup.imperative.clusterRoleName | string | `"imperative-cluster-role"` |  |
 | clusterGroup.imperative.clusterRoleYaml | string | `""` |  |
 | clusterGroup.imperative.cronJobName | string | `"imperative-cronjob"` |  |
+| clusterGroup.imperative.extraPlaybookArgs | list | `[]` | Optional extra arguments for every ansible-playbook invocation (imperative jobs, vault unseal, auto-approve installplans). Each list entry is one argv token. Empty by default. |
 | clusterGroup.imperative.image | string | `"quay.io/validatedpatterns/imperative-container:v1"` |  |
 | clusterGroup.imperative.imagePullPolicy | string | `"Always"` |  |
 | clusterGroup.imperative.insecureUnsealVaultInsideClusterSchedule | string | `"*/5 * * * *"` |  |

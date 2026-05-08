@@ -39,6 +39,9 @@ spec:
               {{- end }}
               - -e
               - "@/values/values.yaml"
+              {{- range ($.Values.clusterGroup.imperative.extraPlaybookArgs | default list) }}
+              - {{ . | quote }}
+              {{- end }}
               - rhvp.cluster_utils.auto_approve_installplans
               volumeMounts:
                 {{- include "imperative.volumemounts_ca" . | indent 16 }}

@@ -52,6 +52,9 @@ spec:
                 - -e
                 - {{ . | quote }}
                 {{- end }}
+                {{- range ($.Values.clusterGroup.imperative.extraPlaybookArgs | default list) }}
+                - {{ . | quote }}
+                {{- end }}
                 - {{ .playbook }}
               volumeMounts:
                 {{- include "imperative.volumemounts_ca" . | indent 16 }}

@@ -18,6 +18,23 @@ tests:
       - isKind:
           of: CronJob
 
+  - it: should append extraPlaybookArgs to auto-approve ansible-playbook command
+    set:
+      global:
+        options:
+          autoApproveManualInstallPlans: true
+      clusterGroup:
+        imperative:
+          adminServiceAccountName: imperative-admin-sa
+          extraPlaybookArgs:
+            - "--diff"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command
+          content: "--diff"
+
   - it: should include ansible dev mode init container when enabled
     set:
       global:

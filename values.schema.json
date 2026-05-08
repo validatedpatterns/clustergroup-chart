@@ -878,6 +878,14 @@
             "-vvvv"
           ]
         },
+        "extraPlaybookArgs": {
+          "type": "array",
+          "description": "Optional argv tokens appended to each ansible-playbook invocation (imperative jobs, vault unseal, and auto-approve installplans CronJobs), after values -e @/values/values.yaml and job extravars (where applicable), and before tags or the playbook name. Empty by default.",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
         "serviceAccountName": {
           "type": "string"
         },
