@@ -1,7 +1,6 @@
 # clustergroup
 
-
-![Version: 0.9.52](https://img.shields.io/badge/Version-0.9.52-informational?style=flat-square)
+![Version: 0.9.53](https://img.shields.io/badge/Version-0.9.53-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -9,6 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.53: Schema documents SS-CSI (Secrets Store CSI with Vault) workload metadata on `clusterGroup.applications`: optional `ssCsiWorkloadAuth` array with required `serviceAccount` and `roleSlug`, optional `namespace` (vp-sscsi-spc infers from the referenced application and chart values when omitted), and optional `cluster`. Aligns with pattern values used by rhvp.cluster_utils and vp-sscsi-spc (see multicloud-gitops and aap-starter-kit).
 * v0.9.52: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development. Add extraPlaybookArgs to imperative as well.
 * v0.9.50: Add support to custom `rbac` in `ArgoDC.spec`
 * v0.9.49: Boolean Templates in override values now also render correctly
@@ -88,10 +88,10 @@ clusterGroup:
 | clusterGroup.imperative.adminServiceAccountCreate | bool | `true` |  |
 | clusterGroup.imperative.adminServiceAccountName | string | `"imperative-admin-sa"` |  |
 | clusterGroup.imperative.ansibleDevMode.ansibleCfgContent | string | `""` | Inline ansible.cfg; when non-empty, written to ansibleCfgFile before ansible-galaxy (so galaxy and playbooks honor collections_path, etc.). |
-| clusterGroup.imperative.ansibleDevMode.ansibleCfgFile | string | `"ansible.cfg"` | Path under the cloned pattern repo for optional injected ansible.cfg (written from ansibleCfgContent when set). |
-| clusterGroup.imperative.ansibleDevMode.enabled | bool | `false` | When true, run an init container before imperative playbooks that can install collections and optionally write ansible.cfg into the cloned repo (/git/repo). |
+| clusterGroup.imperative.ansibleDevMode.ansibleCfgFile | string | `"ansible.cfg"` | Path under the cloned pattern repository for optional injected ansible.cfg (written from ansibleCfgContent when set). |
+| clusterGroup.imperative.ansibleDevMode.enabled | bool | `false` | When true, run an init container before imperative playbooks that can install collections and optionally write ansible.cfg into the cloned pattern checkout in the workload. |
 | clusterGroup.imperative.ansibleDevMode.requirementsContent | string | `""` | Inline requirements.yml; when non-empty, written to requirementsFile before galaxy install. |
-| clusterGroup.imperative.ansibleDevMode.requirementsFile | string | `"requirements.yml"` | Path under the cloned pattern repo for ansible-galaxy -r (written from requirementsContent when set). |
+| clusterGroup.imperative.ansibleDevMode.requirementsFile | string | `"requirements.yml"` | Path under the cloned pattern repository for ansible-galaxy -r (written from requirementsContent when set). |
 | clusterGroup.imperative.clusterRoleName | string | `"imperative-cluster-role"` |  |
 | clusterGroup.imperative.clusterRoleYaml | string | `""` |  |
 | clusterGroup.imperative.cronJobName | string | `"imperative-cronjob"` |  |

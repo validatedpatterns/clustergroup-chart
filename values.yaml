@@ -148,13 +148,13 @@ clusterGroup:
     jobs: []
     image: quay.io/validatedpatterns/imperative-container:v1
     ansibleDevMode:
-      # -- When true, run an init container before imperative playbooks that can install collections and optionally write ansible.cfg into the cloned repo (/git/repo).
+      # -- When true, run an init container before imperative playbooks that can install collections and optionally write ansible.cfg into the cloned pattern checkout in the workload.
       enabled: false
-      # -- Path under the cloned pattern repo for ansible-galaxy -r (written from requirementsContent when set).
+      # -- Path under the cloned pattern repository for ansible-galaxy -r (written from requirementsContent when set).
       requirementsFile: "requirements.yml"
       # -- Inline requirements.yml; when non-empty, written to requirementsFile before galaxy install.
       requirementsContent: ""
-      # -- Path under the cloned pattern repo for optional injected ansible.cfg (written from ansibleCfgContent when set).
+      # -- Path under the cloned pattern repository for optional injected ansible.cfg (written from ansibleCfgContent when set).
       ansibleCfgFile: "ansible.cfg"
       # -- Inline ansible.cfg; when non-empty, written to ansibleCfgFile before ansible-galaxy (so galaxy and playbooks honor collections_path, etc.).
       ansibleCfgContent: ""

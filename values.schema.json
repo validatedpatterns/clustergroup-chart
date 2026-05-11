@@ -566,6 +566,34 @@
         }
       }
     },
+    "SsCsiWorkloadAuthEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Secrets Store CSI with Vault workload identity metadata. Patterns such as multicloud-gitops and aap-starter-kit pass this under clusterGroup.applications for rhvp.cluster_utils (vault_ss_csi_workload_auth) and for vp-sscsi-spc-style charts. The Vault Kubernetes auth role name follows <vaultKubernetesMountPath>-sscsi-<roleSlug> (hub mount or spoke cluster domain as mount).",
+      "properties": {
+        "serviceAccount": {
+          "type": "string",
+          "description": "Service account whose token is associated with the Vault role."
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Namespace of the service account. Optional: vp-sscsi-spc falls back to ocpSecretsStoreCsiVault.secretProviderClass.namespace, then clusterGroup.applications[applicationKey].namespace for the referenced application, then the Helm release namespace."
+        },
+        "roleSlug": {
+          "type": "string",
+          "description": "Stable slug used as the suffix in the Vault role name (<mount>-sscsi-<roleSlug>)."
+        },
+        "cluster": {
+          "type": "string",
+          "description": "Optional cluster label (for example hub on a standalone cluster) when workload auth rows must be disambiguated."
+        }
+      },
+      "required": [
+        "serviceAccount",
+        "roleSlug"
+      ],
+      "title": "SsCsiWorkloadAuthEntry"
+    },
     "Applications": {
       "type": "object",
       "description": "Description of the applications that will be created in the ArgoCD instances. The Application CRD is the Kubernetes resource object representing a deployed application instance in an environment. Two ways of defining applications: Using a list or using a dictionary.",
@@ -713,6 +741,13 @@
         "disabled": {
           "type": "boolean",
           "description": "Whether to disable application creation. If set to true, the application will be skipped."
+        },
+        "ssCsiWorkloadAuth": {
+          "type": "array",
+          "description": "List of SS-CSI (Secrets Store CSI with Vault) workload auth bindings for this application, for example on openshift-sscsi-vault or an app chart that consumes the same metadata (see Validated Patterns multicloud-gitops / aap-starter-kit).",
+          "items": {
+            "$ref": "#/definitions/SsCsiWorkloadAuthEntry"
+          }
         }
       },
       "required": [
