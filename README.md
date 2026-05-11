@@ -1,6 +1,7 @@
 # clustergroup
 
-![Version: 0.9.50](https://img.shields.io/badge/Version-0.9.50-informational?style=flat-square)
+
+![Version: 0.9.52](https://img.shields.io/badge/Version-0.9.52-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -8,7 +9,8 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
-* v0.9.50: Ensure schema matches what we template. Add missing elements and correct some entries.
+* v0.9.52: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development. Add extraPlaybookArgs to imperative as well.
+* v0.9.50: Add support to custom `rbac` in `ArgoDC.spec`
 * v0.9.49: Boolean Templates in override values now also render correctly
 * v0.9.48: Templates in override values now render
 * v0.9.45: Default value of `resourceTrackingMethod` is now `annotation`
@@ -69,6 +71,7 @@ clusterGroup:
 | clusterGroup.argoCD.configManagementPlugins | list | `[]` |  |
 | clusterGroup.argoCD.env | list | `[]` |  |
 | clusterGroup.argoCD.initContainers | list | `[]` |  |
+| clusterGroup.argoCD.rbac | object | `{}` |  |
 | clusterGroup.argoCD.resourceActions | list | `[]` |  |
 | clusterGroup.argoCD.resourceExclusions | string | `"- apiGroups:\n  - tekton.dev\n  kinds:\n  - TaskRun\n  - PipelineRun\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].check | string | `"hs = {}\nif obj.status ~= nil then\n  if obj.status.phase ~= nil then\n    if obj.status.phase == \"Pending\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    elseif obj.status.phase == \"Bound\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    end\n  end\nend\nhs.status = \"Progressing\"\nhs.message = \"Waiting for PVC\"\nreturn hs\n"` |  |
@@ -84,9 +87,15 @@ clusterGroup:
 | clusterGroup.imperative.adminClusterRoleName | string | `"imperative-admin-cluster-role"` |  |
 | clusterGroup.imperative.adminServiceAccountCreate | bool | `true` |  |
 | clusterGroup.imperative.adminServiceAccountName | string | `"imperative-admin-sa"` |  |
+| clusterGroup.imperative.ansibleDevMode.ansibleCfgContent | string | `""` | Inline ansible.cfg; when non-empty, written to ansibleCfgFile before ansible-galaxy (so galaxy and playbooks honor collections_path, etc.). |
+| clusterGroup.imperative.ansibleDevMode.ansibleCfgFile | string | `"ansible.cfg"` | Path under the cloned pattern repo for optional injected ansible.cfg (written from ansibleCfgContent when set). |
+| clusterGroup.imperative.ansibleDevMode.enabled | bool | `false` | When true, run an init container before imperative playbooks that can install collections and optionally write ansible.cfg into the cloned repo (/git/repo). |
+| clusterGroup.imperative.ansibleDevMode.requirementsContent | string | `""` | Inline requirements.yml; when non-empty, written to requirementsFile before galaxy install. |
+| clusterGroup.imperative.ansibleDevMode.requirementsFile | string | `"requirements.yml"` | Path under the cloned pattern repo for ansible-galaxy -r (written from requirementsContent when set). |
 | clusterGroup.imperative.clusterRoleName | string | `"imperative-cluster-role"` |  |
 | clusterGroup.imperative.clusterRoleYaml | string | `""` |  |
 | clusterGroup.imperative.cronJobName | string | `"imperative-cronjob"` |  |
+| clusterGroup.imperative.extraPlaybookArgs | list | `[]` | Optional extra arguments for every ansible-playbook invocation (imperative jobs, vault unseal, auto-approve installplans). Each list entry is one argv token. Empty by default. |
 | clusterGroup.imperative.image | string | `"quay.io/validatedpatterns/imperative-container:v1"` |  |
 | clusterGroup.imperative.imagePullPolicy | string | `"Always"` |  |
 | clusterGroup.imperative.insecureUnsealVaultInsideClusterSchedule | string | `"*/5 * * * *"` |  |

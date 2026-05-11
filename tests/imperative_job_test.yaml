@@ -54,6 +54,43 @@ tests:
           path: spec.jobTemplate.spec.template.spec.serviceAccountName
           value: imperative-sa
 
+  - it: should append clusterGroup.imperative.extraPlaybookArgs before the playbook path
+    set:
+      clusterGroup:
+        imperative:
+          cronJobName: pattern-cronjob
+          jobName: pattern-job
+          namespace: imperative
+          schedule: "0 2 * * *"
+          activeDeadlineSeconds: 3600
+          serviceAccountName: imperative-sa
+          image: quay.io/validatedpatterns/imperative-container:v1
+          imagePullPolicy: Always
+          extraPlaybookArgs:
+            - "--diff"
+            - "--check"
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+              verbosity: "-v"
+              tags: "deploy,config"
+              timeout: "900"
+              extravars:
+                - "environment=production"
+                - "region=us-east-1"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command
+          content: "--diff"
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command
+          content: "--check"
+      - contains:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command
+          content: "deploy-application.yml"
+
   - it: should create multiple init containers for multiple jobs
     set:
       clusterGroup:
@@ -143,3 +180,152 @@ tests:
     asserts:
       - hasDocuments:
           count: 1
+
+  - it: should add ansible dev mode init container when enabled
+    set:
+      clusterGroup:
+        imperative:
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: collections/requirements.yml
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
+
+  - it: should inject inline requirements content when provided
+    set:
+      clusterGroup:
+        imperative:
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: collections/requirements.yml
+            requirementsContent: |
+              collections:
+                - name: rhvp.cluster_utils
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
+
+  - it: should inject requirements and ansible.cfg heredocs when both contents are set
+    set:
+      clusterGroup:
+        imperative:
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: collections/requirements.yml
+            requirementsContent: |
+              collections:
+                - name: rhvp.cluster_utils
+            ansibleCfgFile: dev/ansible.cfg
+            ansibleCfgContent: |
+              [defaults]
+              collections_path=~/.ansible/collections:/usr/share/ansible/collections
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "dev/ansible.cfg"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
+
+  - it: should inject ansible.cfg only when requirementsContent is empty
+    set:
+      clusterGroup:
+        imperative:
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: collections/requirements.yml
+            requirementsContent: ""
+            ansibleCfgFile: dev/ansible.cfg
+            ansibleCfgContent: |
+              [defaults]
+              collections_path=~/.ansible/collections:/usr/share/ansible/collections
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "dev/ansible.cfg"'
+      - notMatchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'
+
+  - it: should inject inline ansible.cfg when ansibleCfgContent is provided
+    set:
+      clusterGroup:
+        imperative:
+          jobs:
+            - name: deploy-app
+              playbook: deploy-application.yml
+          ansibleDevMode:
+            enabled: true
+            requirementsFile: collections/requirements.yml
+            ansibleCfgFile: dev/ansible.cfg
+            ansibleCfgContent: |
+              [defaults]
+              collections_path=~/.ansible/collections:/usr/share/ansible/collections
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].name
+          value: ansible-dev-mode
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'cat <<''EOF'' > "dev/ansible.cfg"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'collections_path=~/.ansible/collections:/usr/share/ansible/collections'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection install -r "collections/requirements.yml"'
+      - matchRegex:
+          path: spec.jobTemplate.spec.template.spec.initContainers[2].command[2]
+          pattern: 'ansible-galaxy collection list'

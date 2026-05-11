@@ -1,0 +1,37 @@
+suite: Test argocd with rbac
+templates:
+  - templates/plumbing/argocd.yaml
+release:
+  name: release-test
+tests:
+  - it: should render default rbac
+    documentIndex: 0
+    asserts:
+      - isSubset:
+          path: spec.rbac
+          content:
+            defaultPolicy: role:readonly
+            policy: |-
+              g, system:cluster-admins, role:admin
+              g, cluster-admins, role:admin
+              g, admin, role:admin
+            scopes: '[groups, email]'
+
+  - it: should render custom rbac correctly
+    set:
+      clusterGroup:
+        argoCD:
+          rbac:
+            defaultPolicy: default
+            policy: |-
+              g, test-group, role:admin
+            scopes: '[one, two]'
+    documentIndex: 0
+    asserts:
+      - isSubset:
+          path: spec.rbac
+          content:
+            defaultPolicy: default
+            policy: |-
+              g, test-group, role:admin
+            scopes: '[one, two]'
