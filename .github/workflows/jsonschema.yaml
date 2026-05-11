@@ -30,4 +30,6 @@ jobs:
 
       - name: Verify ClusterGroup values.schema.json
         run: |
-          check-jsonschema --schemafile ./values.schema.json "values.yaml"
+          check-jsonschema --schemafile ./values.schema.json \
+            "values.yaml" \
+            "tests/fixtures/values-cluster-group-schema.yaml"
