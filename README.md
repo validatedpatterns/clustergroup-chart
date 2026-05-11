@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.51](https://img.shields.io/badge/Version-0.9.51-informational?style=flat-square)
+![Version: 0.9.52](https://img.shields.io/badge/Version-0.9.52-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -8,7 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
-* v0.9.51: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development. Add extraPlaybookArgs to imperative as well.
+* v0.9.52: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development. Add extraPlaybookArgs to imperative as well.
 * v0.9.50: Add support to custom `rbac` in `ArgoDC.spec`
 * v0.9.49: Boolean Templates in override values now also render correctly
 * v0.9.48: Templates in override values now render
