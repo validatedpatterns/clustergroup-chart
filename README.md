@@ -8,6 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.51: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development. Add extraPlaybookArgs to imperative as well.
 * v0.9.50: Add support to custom `rbac` in `ArgoDC.spec`
 * v0.9.49: Boolean Templates in override values now also render correctly
 * v0.9.48: Templates in override values now render
@@ -85,9 +86,15 @@ clusterGroup:
 | clusterGroup.imperative.adminClusterRoleName | string | `"imperative-admin-cluster-role"` |  |
 | clusterGroup.imperative.adminServiceAccountCreate | bool | `true` |  |
 | clusterGroup.imperative.adminServiceAccountName | string | `"imperative-admin-sa"` |  |
+| clusterGroup.imperative.ansibleDevMode.ansibleCfgContent | string | `""` | Inline ansible.cfg; when non-empty, written to ansibleCfgFile before ansible-galaxy (so galaxy and playbooks honor collections_path, etc.). |
+| clusterGroup.imperative.ansibleDevMode.ansibleCfgFile | string | `"ansible.cfg"` | Path under the cloned pattern repo for optional injected ansible.cfg (written from ansibleCfgContent when set). |
+| clusterGroup.imperative.ansibleDevMode.enabled | bool | `false` | When true, run an init container before imperative playbooks that can install collections and optionally write ansible.cfg into the cloned repo (/git/repo). |
+| clusterGroup.imperative.ansibleDevMode.requirementsContent | string | `""` | Inline requirements.yml; when non-empty, written to requirementsFile before galaxy install. |
+| clusterGroup.imperative.ansibleDevMode.requirementsFile | string | `"requirements.yml"` | Path under the cloned pattern repo for ansible-galaxy -r (written from requirementsContent when set). |
 | clusterGroup.imperative.clusterRoleName | string | `"imperative-cluster-role"` |  |
 | clusterGroup.imperative.clusterRoleYaml | string | `""` |  |
 | clusterGroup.imperative.cronJobName | string | `"imperative-cronjob"` |  |
+| clusterGroup.imperative.extraPlaybookArgs | list | `[]` | Optional extra arguments for every ansible-playbook invocation (imperative jobs, vault unseal, auto-approve installplans). Each list entry is one argv token. Empty by default. |
 | clusterGroup.imperative.image | string | `"quay.io/validatedpatterns/imperative-container:v1"` |  |
 | clusterGroup.imperative.imagePullPolicy | string | `"Always"` |  |
 | clusterGroup.imperative.insecureUnsealVaultInsideClusterSchedule | string | `"*/5 * * * *"` |  |
