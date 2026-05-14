@@ -64,7 +64,7 @@ Default always defined valueFiles to be included in Applications
 {{- end }}
 {{- if $.Values.global.extraValueFiles }}
 {{- range $.Values.global.extraValueFiles }}
-- {{ . | quote }}
+- {{ tpl . $ | quote }}
 {{- end }} {{/* range $.Values.global.extraValueFiles */}}
 {{- end }} {{/* if $.Values.global.extraValueFiles */}}
 {{- end }} {{/* clustergroup.app.globalvalues.valuefiles */}}
@@ -116,7 +116,7 @@ Default always defined valueFiles to be included in Applications but with a pref
 {{- end }}
 {{- if $.Values.global.extraValueFiles }}
 {{- range $.Values.global.extraValueFiles }}
-- "$patternref/{{ . }}"
+- "$patternref/{{ tpl . $ }}"
 {{- end }} {{/* range $.Values.global.extraValueFiles */}}
 {{- end }} {{/* if $.Values.global.extraValueFiles */}}
 {{- end }} {{/* clustergroup.app.globalvalues.prefixedvaluefiles */}}
