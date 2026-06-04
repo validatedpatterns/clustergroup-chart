@@ -1,5 +1,5 @@
 {{- if ($.Values.global.deletePattern | ne "DeleteChildApps") }} {{- /* When a pattern is deleting applications should be removed */}}
-{{- $namespace := print $.Values.global.pattern "-" $.Values.clusterGroup.name }}
+{{- $namespace := include "clustergroup.template.argocdnamespace" . | trim }}
 {{- range .Values.clusterGroup.applications }}
 {{- if . }} {{- /* Skip null applications */}}
 {{- $projectName := coalesce .argoProject .project "default" -}} {{- /* Read argoProject if set, otherwise .project and otherwise set it to "default" */}}

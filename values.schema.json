@@ -207,6 +207,10 @@
           "type": "string",
           "description": "The namespace used for the GitOps subscription. Passed as a helm parameter to all ArgoCD applications.",
           "default": ""
+        },
+        "singleArgoCD": {
+          "type": "boolean",
+          "description": "If set to true there will only be a single argocd instance"
         }
       },
       "required": [
@@ -301,8 +305,8 @@
           "description": "DEPRECATED: If set to true the values is used to identify whether this is the hub cluster or an edge/spoke cluster configuration. Use global.localClusterDomain and global.hubClusterDomain instead."
         },
         "sharedValueFiles": {
-            "type": "array",
-            "description": "Templated value file paths."
+          "type": "array",
+          "description": "Templated value file paths."
         },
         "scheduler": {
           "type": "object",
@@ -893,7 +897,10 @@
           "type": "string"
         },
         "clusterRoleYaml": {
-          "type": ["string", "array"]
+          "type": [
+            "string",
+            "array"
+          ]
         },
         "roleName": {
           "type": "string"
@@ -957,7 +964,10 @@
           "type": "string"
         },
         "timeout": {
-          "type": ["integer", "string"]
+          "type": [
+            "integer",
+            "string"
+          ]
         },
         "image": {
           "type": "string",

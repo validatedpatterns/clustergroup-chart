@@ -5,6 +5,6 @@ kind: Namespace
 metadata:
   labels:
     name: {{ $.Values.clusterGroup.imperative.namespace }}
-    argocd.argoproj.io/managed-by: {{ $.Values.global.pattern }}-{{ $.Values.clusterGroup.name }}
+    argocd.argoproj.io/managed-by: {{ include "clustergroup.template.argocdnamespace" . }}
   name: {{ $.Values.clusterGroup.imperative.namespace }}
 {{- end }}
