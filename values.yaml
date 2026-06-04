@@ -1,4 +1,6 @@
 global:
+  # -- When set to true, a single ArgoCD instance (in `global.vpArgoNamespace`) is used instead of creating a per-clustergroup instance
+  singleArgoCD: false
   extraValueFiles: []
   pattern: common
   # cluster-wide argo namespace
