@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.52](https://img.shields.io/badge/Version-0.9.52-informational?style=flat-square)
+![Version: 0.9.53](https://img.shields.io/badge/Version-0.9.53-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -8,6 +8,7 @@ This chart is used to set up the basic building blocks in [Validated Patterns](h
 
 ### Notable changes
 
+* v0.9.53: Add .values.global.singleArgoCD support
 * v0.9.52: Add ansibleDevMode (requirements.yml injection and optional ansibleCfgFile/ansibleCfgContent) to simplify rhvp.cluster_utils development. Add extraPlaybookArgs to imperative as well.
 * v0.9.50: Add support to custom `rbac` in `ArgoDC.spec`
 * v0.9.49: Boolean Templates in override values now also render correctly
@@ -120,6 +121,7 @@ clusterGroup:
 | global.pattern | string | `"common"` |  |
 | global.secretLoader.disabled | bool | `false` |  |
 | global.secretStore.backend | string | `"vault"` |  |
+| global.singleArgoCD | bool | `false` | When set to true, a single ArgoCD instance (in `global.vpArgoNamespace`) is used instead of creating a per-clustergroup instance |
 | global.targetRevision | string | `"main"` |  |
 | global.vpArgoNamespace | string | `"openshift-gitops"` |  |
 | secretStore.kind | string | `"ClusterSecretStore"` |  |
