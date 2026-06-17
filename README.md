@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.53](https://img.shields.io/badge/Version-0.9.53-informational?style=flat-square)
+![Version: 0.9.54](https://img.shields.io/badge/Version-0.9.54-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -105,6 +105,7 @@ clusterGroup:
 | clusterGroup.imperative.serviceAccountCreate | bool | `true` |  |
 | clusterGroup.imperative.serviceAccountName | string | `"imperative-sa"` |  |
 | clusterGroup.imperative.valuesConfigMap | string | `"helm-values-configmap"` |  |
+| clusterGroup.imperative.vaultNamespace | string | `"vault"` | Namespace where the Vault pod runs. Used to grant pods/exec RBAC on OCP 4.22+ (Kubernetes 1.35+). |
 | clusterGroup.imperative.verbosity | string | `""` |  |
 | clusterGroup.managedClusterGroups | object | `{}` |  |
 | clusterGroup.name | string | `"example"` |  |
