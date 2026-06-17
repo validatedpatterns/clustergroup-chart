@@ -115,6 +115,8 @@ clusterGroup:
     adminServiceAccountCreate: true
     adminServiceAccountName: imperative-admin-sa
     adminClusterRoleName: imperative-admin-cluster-role
+    # -- Namespace where the Vault pod runs. Used to grant pods/exec RBAC on OCP 4.22+ (Kubernetes 1.35+).
+    vaultNamespace: "vault"
 
   managedClusterGroups: {}
   namespaces: []

@@ -1,0 +1,148 @@
+suite: Test vault pods/exec Role and RoleBinding for OCP
+templates:
+  - templates/imperative/vault-exec-role.yaml
+release:
+  name: release-test
+tests:
+  - it: should create vault exec role by default
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: should create vault exec role and rolebinding
+    set:
+      global:
+        secretStore:
+          backend: vault
+      clusterGroup:
+        imperative:
+          serviceAccountCreate: true
+          serviceAccountName: imperative-sa
+          namespace: imperative
+          vaultNamespace: vault
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        isKind:
+          of: Role
+      - documentIndex: 0
+        equal:
+          path: metadata.name
+          value: vault-pod-exec
+      - documentIndex: 0
+        equal:
+          path: metadata.namespace
+          value: vault
+      - documentIndex: 0
+        equal:
+          path: rules[0].apiGroups[0]
+          value: ""
+      - documentIndex: 0
+        equal:
+          path: rules[0].resources[0]
+          value: pods/exec
+      - documentIndex: 0
+        contains:
+          path: rules[0].verbs
+          content: create
+      - documentIndex: 0
+        contains:
+          path: rules[0].verbs
+          content: get
+      - documentIndex: 1
+        isKind:
+          of: RoleBinding
+      - documentIndex: 1
+        equal:
+          path: metadata.name
+          value: imperative-vault-exec-rolebinding
+      - documentIndex: 1
+        equal:
+          path: metadata.namespace
+          value: vault
+      - documentIndex: 1
+        equal:
+          path: roleRef.name
+          value: vault-pod-exec
+      - documentIndex: 1
+        equal:
+          path: subjects[0].name
+          value: imperative-sa
+      - documentIndex: 1
+        equal:
+          path: subjects[0].namespace
+          value: imperative
+
+  - it: should not create vault exec role when backend is not vault
+    set:
+      global:
+        secretStore:
+          backend: none
+      clusterGroup:
+        imperative:
+          serviceAccountCreate: true
+          serviceAccountName: imperative-sa
+          namespace: imperative
+          vaultNamespace: vault
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create vault exec role when backend key is missing (defaults to vault)
+    set:
+      global:
+        secretStore: {}
+      clusterGroup:
+        imperative:
+          serviceAccountCreate: true
+          serviceAccountName: imperative-sa
+          namespace: imperative
+          vaultNamespace: vault
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        isKind:
+          of: Role
+      - documentIndex: 1
+        isKind:
+          of: RoleBinding
+
+  - it: should not create vault exec role when serviceAccountCreate is false
+    set:
+      global:
+        secretStore:
+          backend: vault
+      clusterGroup:
+        imperative:
+          serviceAccountCreate: false
+          serviceAccountName: imperative-sa
+          namespace: imperative
+          vaultNamespace: vault
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should use custom vaultNamespace
+    set:
+      global:
+        secretStore:
+          backend: vault
+      clusterGroup:
+        imperative:
+          serviceAccountCreate: true
+          serviceAccountName: imperative-sa
+          namespace: imperative
+          vaultNamespace: custom-vault
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        equal:
+          path: metadata.namespace
+          value: custom-vault
+      - documentIndex: 1
+        equal:
+          path: metadata.namespace
+          value: custom-vault

@@ -916,6 +916,11 @@
         },
         "adminClusterRoleName": {
           "type": "string"
+        },
+        "vaultNamespace": {
+          "type": "string",
+          "description": "Namespace where the Vault pod runs. Used to grant pods/exec RBAC on OCP 4.22+ (Kubernetes 1.35+).",
+          "default": "vault"
         }
       },
       "required": [
