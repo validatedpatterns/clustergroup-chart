@@ -3,6 +3,16 @@
 {{- if or (eq .Values.global.secretStore.backend "vault") (not (hasKey .Values.global.secretStore "backend")) }}
 {{- if not (eq .Values.enabled "plumbing") }}
 {{- if $.Values.clusterGroup.imperative.serviceAccountCreate }}
+{{- $hashicorp_vault_found := false }}
+{{- range .Values.clusterGroup.applications }}
+  {{- if . }} {{- /* Skip null applications */}}
+    {{- if eq .chart "hashicorp-vault" }}
+      {{- $hashicorp_vault_found = true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- if or (eq (include "clustergroup.ishubcluster" .) "true") $hashicorp_vault_found }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -31,6 +41,7 @@ subjects:
   - kind: ServiceAccount
     name: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
     namespace: {{ $.Values.clusterGroup.imperative.namespace }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
