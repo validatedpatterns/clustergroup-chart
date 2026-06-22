@@ -4,7 +4,10 @@ templates:
 release:
   name: release-test
 tests:
-  - it: should create vault exec role by default
+  - it: should create vault exec role by default on hub cluster
+    set:
+      clusterGroup:
+        isHubCluster: true
     asserts:
       - hasDocuments:
           count: 2
@@ -15,6 +18,7 @@ tests:
         secretStore:
           backend: vault
       clusterGroup:
+        isHubCluster: true
         imperative:
           serviceAccountCreate: true
           serviceAccountName: imperative-sa
@@ -94,6 +98,7 @@ tests:
       global:
         secretStore: {}
       clusterGroup:
+        isHubCluster: true
         imperative:
           serviceAccountCreate: true
           serviceAccountName: imperative-sa
@@ -130,6 +135,7 @@ tests:
         secretStore:
           backend: vault
       clusterGroup:
+        isHubCluster: true
         imperative:
           serviceAccountCreate: true
           serviceAccountName: imperative-sa
@@ -146,3 +152,53 @@ tests:
         equal:
           path: metadata.namespace
           value: custom-vault
+
+  - it: should not create vault exec role on spoke cluster without hashicorp-vault app
+    set:
+      global:
+        secretStore:
+          backend: vault
+      clusterGroup:
+        isHubCluster: false
+        imperative:
+          serviceAccountCreate: true
+          serviceAccountName: imperative-sa
+          namespace: imperative
+          vaultNamespace: vault
+        applications:
+          test:
+            name: test
+            namespace: test
+            project: test
+            chart: test-chart
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should create vault exec role on spoke cluster with hashicorp-vault app
+    set:
+      global:
+        secretStore:
+          backend: vault
+      clusterGroup:
+        isHubCluster: false
+        imperative:
+          serviceAccountCreate: true
+          serviceAccountName: imperative-sa
+          namespace: imperative
+          vaultNamespace: vault
+        applications:
+          vault:
+            name: vault
+            namespace: vault
+            project: hub
+            chart: hashicorp-vault
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        isKind:
+          of: Role
+      - documentIndex: 1
+        isKind:
+          of: RoleBinding
