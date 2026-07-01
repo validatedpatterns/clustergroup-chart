@@ -1,5 +1,6 @@
 {{/* Kubernetes 1.35 (OCP 4.22+) requires the 'create' verb on pods/exec for WebSocket-based
      exec. Grant it to the imperative SA in the vault namespace so k8s_exec can reach vault-0. */}}
+{{- if not .Values.global.secretLoader.disabled }}
 {{- if or (eq .Values.global.secretStore.backend "vault") (not (hasKey .Values.global.secretStore "backend")) }}
 {{- if not (eq .Values.enabled "plumbing") }}
 {{- if $.Values.clusterGroup.imperative.serviceAccountCreate }}
@@ -41,6 +42,7 @@ subjects:
   - kind: ServiceAccount
     name: {{ $.Values.clusterGroup.imperative.serviceAccountName }}
     namespace: {{ $.Values.clusterGroup.imperative.namespace }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
