@@ -96,3 +96,67 @@ tests:
         equal:
           path: subjects[1].namespace
           value: mypattern-edge
+
+  - it: should set default sync-wave annotation to -1 on first ClusterRoleBinding
+    set:
+      global:
+        pattern: common
+        vpArgoNamespace: openshift-gitops
+      clusterGroup:
+        name: hub
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "-1"
+
+  - it: should set default sync-wave annotation to -1 on second ClusterRoleBinding
+    set:
+      global:
+        pattern: common
+        vpArgoNamespace: openshift-gitops
+      clusterGroup:
+        name: hub
+    asserts:
+      - documentIndex: 1
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "-1"
+
+  - it: should allow overriding sync-wave annotation on both ClusterRoleBindings
+    set:
+      global:
+        pattern: common
+        vpArgoNamespace: openshift-gitops
+        options:
+          clusterRoleBindingSyncWave: "-2"
+      clusterGroup:
+        name: hub
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "-2"
+      - documentIndex: 1
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "-2"
+
+  - it: should allow setting sync-wave to zero
+    set:
+      global:
+        pattern: common
+        vpArgoNamespace: openshift-gitops
+        options:
+          clusterRoleBindingSyncWave: "0"
+      clusterGroup:
+        name: hub
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "0"
+      - documentIndex: 1
+        equal:
+          path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+          value: "0"

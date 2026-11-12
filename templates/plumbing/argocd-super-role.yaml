@@ -7,6 +7,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{ $.Values.global.vpArgoNamespace }}-cluster-admin-rolebinding
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $.Values.global.options.clusterRoleBindingSyncWave | quote }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -27,6 +29,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{ $.Values.global.pattern }}-{{ .Values.clusterGroup.name }}-cluster-admin-rolebinding
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $.Values.global.options.clusterRoleBindingSyncWave | quote }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

@@ -293,6 +293,11 @@
         "applicationRetryLimit": {
           "type": "integer",
           "description": "Number of failed sync attempt retries; unlimited number of attempts if less than 0"
+        },
+        "clusterRoleBindingSyncWave": {
+          "type": "string",
+          "description": "Sync-wave annotation value for the cluster-admin ClusterRoleBinding. Defaults to -1 so it is applied before wave-0 resources",
+          "default": "-1"
         }
       },
       "required": [

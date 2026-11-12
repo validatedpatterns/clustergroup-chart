@@ -18,6 +18,8 @@ global:
     syncPolicy: Automatic
     installPlanApproval: Automatic
     applicationRetryLimit: 20
+    # -- Sync-wave annotation for the cluster-admin ClusterRoleBinding. Set to "-1" so it is applied before wave-0 resources that need cluster-admin privileges
+    clusterRoleBindingSyncWave: "-1"
 
 # Note that sometimes changing helm values might require a hard refresh (https://github.com/helm/helm/issues/3486)
 clusterGroup:
