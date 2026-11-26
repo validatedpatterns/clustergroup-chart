@@ -1,6 +1,6 @@
 # clustergroup
 
-![Version: 0.9.60](https://img.shields.io/badge/Version-0.9.60-informational?style=flat-square)
+![Version: 0.9.61](https://img.shields.io/badge/Version-0.9.61-informational?style=flat-square)
 
 A Helm chart to create per-clustergroup ArgoCD applications and any required namespaces or subscriptions.
 
@@ -77,6 +77,26 @@ clusterGroup:
 | clusterGroup.argoCD.resourceHealthChecks[0].check | string | `"hs = {}\nif obj.status ~= nil then\n  if obj.status.phase ~= nil then\n    if obj.status.phase == \"Pending\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    elseif obj.status.phase == \"Bound\" then\n      hs.status = \"Healthy\"\n      hs.message = obj.status.phase\n      return hs\n    end\n  end\nend\nhs.status = \"Progressing\"\nhs.message = \"Waiting for PVC\"\nreturn hs\n"` |  |
 | clusterGroup.argoCD.resourceHealthChecks[0].kind | string | `"PersistentVolumeClaim"` |  |
 | clusterGroup.argoCD.resourceTrackingMethod | string | `"annotation"` |  |
+| clusterGroup.argoCD.resources.applicationSet.limits.cpu | string | `"2"` |  |
+| clusterGroup.argoCD.resources.applicationSet.limits.memory | string | `"1Gi"` |  |
+| clusterGroup.argoCD.resources.applicationSet.requests.cpu | string | `"250m"` |  |
+| clusterGroup.argoCD.resources.applicationSet.requests.memory | string | `"512Mi"` |  |
+| clusterGroup.argoCD.resources.controller.limits.cpu | string | `"4"` |  |
+| clusterGroup.argoCD.resources.controller.limits.memory | string | `"4Gi"` |  |
+| clusterGroup.argoCD.resources.controller.requests.cpu | string | `"500m"` |  |
+| clusterGroup.argoCD.resources.controller.requests.memory | string | `"2Gi"` |  |
+| clusterGroup.argoCD.resources.dex.limits.cpu | string | `"500m"` |  |
+| clusterGroup.argoCD.resources.dex.limits.memory | string | `"256Mi"` |  |
+| clusterGroup.argoCD.resources.dex.requests.cpu | string | `"250m"` |  |
+| clusterGroup.argoCD.resources.dex.requests.memory | string | `"128Mi"` |  |
+| clusterGroup.argoCD.resources.repo.limits.cpu | string | `"1"` |  |
+| clusterGroup.argoCD.resources.repo.limits.memory | string | `"1Gi"` |  |
+| clusterGroup.argoCD.resources.repo.requests.cpu | string | `"250m"` |  |
+| clusterGroup.argoCD.resources.repo.requests.memory | string | `"256Mi"` |  |
+| clusterGroup.argoCD.resources.server.limits.cpu | string | `"500m"` |  |
+| clusterGroup.argoCD.resources.server.limits.memory | string | `"256Mi"` |  |
+| clusterGroup.argoCD.resources.server.requests.cpu | string | `"125m"` |  |
+| clusterGroup.argoCD.resources.server.requests.memory | string | `"128Mi"` |  |
 | clusterGroup.argoCD.volumeMounts | list | `[]` |  |
 | clusterGroup.argoCD.volumes | list | `[]` |  |
 | clusterGroup.extraObjects | object | `{}` |  |
